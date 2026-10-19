@@ -1,0 +1,1523 @@
+<!doctype html><html lang="pt"><head><meta charset="utf-8">
+<!--
+Pecha formatter. Code: MIT licence. Fonts embedded below: SIL Open Font License 1.1.
+
+MIT License
+
+Copyright (c) 2026 The pecha contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+This licence covers the code only. The fonts in fonts/ (Noto Serif Tibetan, Noto Serif
+and Noto Serif Italic, subsets in WOFF2) keep the SIL Open Font License 1.1; their
+copyright notices and the licence are in fonts/OFL.txt. Texts from Lotsawa House are
+under CC BY-NC 4.0 and are not part of the code. Images are outside this licence
+until the origin of each drawing is confirmed.
+-->
+<title>Motor da pecha</title><style>@font-face{font-family:'Noto Serif Tibetan';src:url(fonts/noto-serif-tibetan.woff2) format('woff2');font-style:normal;font-weight:100 900;font-display:block}
+@font-face{font-family:'Noto Serif';src:url(fonts/noto-serif.woff2) format('woff2');font-style:normal;font-weight:100 900;font-display:block}
+@font-face{font-family:'Noto Serif';src:url(fonts/noto-serif-italic.woff2) format('woff2');font-style:italic;font-weight:100 900;font-display:block}
+
+@page{size:297mm 210mm;margin:0}
+:root{--out:1px;--in:1px;--opening:7mm;--pair-gap:6mm;--bo:19pt;--lh-bo:1.85;--bo-small:16.2pt;--latin:10.5pt;--phon:10.5pt;--breath:5mm;--bo-title:24pt}
+html,body{margin:0;padding:0;background:#fff}
+#source{position:absolute;left:-9999px;top:0;width:248mm}
+#stage{position:absolute;left:0;top:0}
+.side{width:297mm;height:105mm;position:relative}
+.sheet{width:297mm;height:210mm;position:relative;page-break-after:always;overflow:hidden}
+.sheet:last-child{page-break-after:auto}
+.sheet.rotated{transform:rotate(180deg)}
+.cut-line{position:absolute;left:0;right:0;top:105mm;border-top:.06mm dashed #e2e2e2}
+.sheet.back .cut-line{display:none}  /* double-sided: the cut line only on the front (odd) pages */
+.slot{position:absolute;left:0;width:297mm;height:105mm}
+.slot.top{top:0}.slot.bottom{top:105mm}
+/* each pair of lines has an outer line (--out) and an inner line (--in), on all four sides: both thin (thin), the outer
+   thick (thick-out) or the inner thick (thick-in); the frame grows outwards by the extra width, and
+   the text loses the inner line's extra pixel from its padding, so the text area is the same in the three frames and
+   the text breaks at the same points */
+/* frame geometry in whole CSS pixels: Chromium snaps borders to device pixels when printing, so millimetre values
+   gave unequal gaps (3 or 4 px) between the two lines depending on where each line fell. 34px = 9.0mm, 2px = 0.53mm,
+   3px = 0.79mm, 1px = 0.26mm; the frame is 329px tall, leaving 33.85px (8.96mm) below against 34px above. */
+.frame{position:absolute;left:calc(36px - var(--out) - var(--in));right:calc(36px - var(--out) - var(--in));top:calc(36px - var(--out) - var(--in));height:calc(325px + 2 * (var(--out) + var(--in)));box-sizing:border-box;border:var(--out) solid #000;padding:3px}
+.inner{position:absolute;inset:3px;border:var(--in) solid #000;display:grid;grid-template-columns:34px 1fr 34px;grid-template-rows:100%}
+.margin-box{border-right:var(--out) solid #000;display:flex;align-items:center;justify-content:center;writing-mode:sideways-lr;font-family:"Noto Serif Tibetan";font-size:9pt;padding:2mm 0}
+.margin-box.right{border-right:0;border-left:var(--out) solid #000;font-size:14pt}  /* the pecha number, larger than the 9pt margin title */
+.panel{display:flex;align-items:center;justify-content:center;padding:3mm;box-sizing:border-box}
+.panel.left{margin-left:3px}   /* the gap towards the text comes from the text's own margin */
+.panel.right{margin-right:3px}
+.panel.left{border-left:var(--in) solid #000;border-right:var(--out) solid #000}
+.panel.right{border-left:var(--out) solid #000;border-right:var(--in) solid #000}
+.panel.edge.left{border-left:0;margin-left:0}    /* on the cover the panel touches the frame: no extra line */
+.panel.edge.right{border-right:0;margin-right:0}
+.panel img{max-width:100%;max-height:100%;object-fit:contain}
+.plate{max-height:68mm;max-width:100%;object-fit:contain}
+.text.plate-page{justify-content:center}
+.margin-box span{transform:translateX(.33em)}  /* the Tibetan font's ascent/descent asymmetry pulls the ink off the line-box centre */
+.text{padding:3mm calc(5mm + 1px - var(--in)) 3mm;overflow:hidden;height:100%;box-sizing:border-box;margin:0 3px;border-left:var(--in) solid #000;border-right:var(--in) solid #000;position:relative}
+.text.opens-bo{padding-top:4.5mm}
+.text.centered{align-content:center}
+.text.opens-bo.loose{padding-top:6mm}   /* the same height as a full side: the body of the first line starts about 7.3 mm below the frame */
+.text.loose:not(.opens-bo):not(:has(> .insert:first-child, > .section-head:not(.has-bo):first-child)){padding-top:7.5mm}   /* a short side opening with Latin text keeps more white above its first line; the translator's heading keeps its own margin */
+/* a centred side opening with Tibetan leaves below the last line the white that lies above the midpoint between the
+   highest ink (the vowel signs) and the body of the letters; the paddings add up to the same 7.5 mm, so the fit is
+   unchanged */
+.text.opens-bo.centered{padding-top:4.25mm;padding-bottom:3.25mm}
+/* a Tibetan-only flow has deeper line boxes (1.85) and subjoined letters at the bottom: there the block sits 1 mm
+   lower to balance by the body of the letters */
+.text.opens-bo.centered:has(> .flow){padding-top:4mm;padding-bottom:3.5mm}
+.text.cover{display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;text-align:center}
+.cover .bo{font-size:var(--bo-title);line-height:1.6}
+.cover .cover-block .bo{font-size:28pt;text-wrap:balance}
+.cover .title-latin, .cover .subtitle{text-wrap:balance}
+.cover .title-latin{font-family:"Noto Serif";font-size:14pt;margin:3mm 0 0}
+.cover .subtitle{font-family:"Noto Serif";font-size:11pt;margin:1.5mm 0 0}
+.cover .author{font-family:"Noto Serif";font-style:italic;font-size:10pt;margin:2mm 0 0}
+.flow{font-family:"Noto Serif Tibetan";font-size:var(--bo);line-height:var(--lh-bo);text-align:justify;text-align-last:left}
+.flow .cell{display:inline;margin-right:4mm}
+.flow .cell.note{font-size:var(--bo-small)}
+.flow .cell.joined{margin-right:0}   /* the shads of its end open the next verse, which keeps the space between them */
+.flow .lead{white-space:nowrap}
+.flow .lead .first{margin-right:4mm}
+.pair{display:grid;grid-auto-flow:column;grid-auto-columns:max-content;column-gap:var(--pair-gap);align-items:baseline}
+.bo{font-family:"Noto Serif Tibetan";font-size:var(--bo);line-height:var(--lh-bo);margin:0}
+.keep{white-space:nowrap}   /* the last syllables of a Tibetan verse or paragraph, kept on one line */
+.phon{font-family:"Noto Serif";font-weight:700;font-size:var(--phon);letter-spacing:.04em;margin:0;line-height:1.3;text-transform:uppercase}
+.trans{font-family:"Noto Serif";font-size:var(--latin);margin:0 0 var(--breath);line-height:1.3}
+.trans, .phon{white-space:pre-line}   /* the source's line breaks */
+.block{margin-bottom:var(--breath)}
+.bo.prose{line-height:1.85;text-align:justify;text-align-last:left;margin-bottom:1mm}
+.para .trans{margin-bottom:1mm}
+.para .phon{margin:0 0 1mm}
+.para .trans:last-child{margin-bottom:var(--breath)}
+/* the explanation that opens the text stands 7 mm from it, a space that does not close up with the breath */
+.text > .opening > :last-child, .text > p.opening{margin-bottom:var(--opening)}
+.trans.sanskrit{font-style:italic}
+.note .bo, .bo .note{font-size:var(--bo-small)}
+.note .trans, .trans .note{font-style:italic}
+/* auxiliary text (colophon, note, instruction, explanatory prose): 85% of the recited body, italic in the Latin
+   layers, upright in the Tibetan; --bo-small is 85% of --bo and follows a side's scale */
+.aux .bo, .note .bo{font-size:var(--bo-small)}
+.aux .trans, .aux .phon, .note .trans, .note .phon, .trans.rubric{font-style:italic;font-size:calc(var(--latin) * .85)}
+.aux .phon, .note .phon{font-size:calc(var(--phon) * .85)}
+.text > :last-child, .text > :last-child > .trans{margin-bottom:0}
+/* the translator's own heading: left, upright small caps, 4.5 mm above the Tibetan it opens, which the yig mgo raises
+   by another 4 mm */
+.trans.insert{text-align:left;font-style:normal;font-variant:small-caps;letter-spacing:.06em;font-size:var(--latin);margin:0 0 4.5mm}
+.text > .insert:first-child .trans.insert{margin-top:0}
+.text > .section-head:not(.has-bo):first-child .trans{margin-top:0}   /* a Latin heading that opens a side: the same white above it as the translator's heading */
+.text.loose > .insert:first-child .trans.insert, .text.loose > .section-head:not(.has-bo):first-child .trans{margin-top:3mm}   /* a side at the top: the heading keeps clear of the frame */
+.text.centered > .insert:first-child .trans.insert, .text.centered > .section-head:not(.has-bo):first-child .trans{margin-top:-0.7mm}   /* a centred side: the heading's line box leaves more room above its letters than below the last line */
+.section.insert + :has(.yig){padding-top:4mm}   /* the yig mgo rises above its line; padding, so it adds to the heading margin */
+/* a numbered heading: Tibetan line over its English title, left like the translator's headings;
+   padding below, so it does not merge with the margins around it */
+.section-head{text-align:left;margin:0;padding-bottom:6.5mm}
+.section-head .trans{font-variant:small-caps;letter-spacing:.04em;margin:1mm 0 0}
+.section-head.has-bo .trans.insert{margin:1mm 0 0 !important}   /* the translator's heading under its Tibetan line: the block's padding gives the room below */
+.section-head:not(.has-bo) .trans{margin-top:2mm}
+.credits{font-family:"Noto Serif";font-style:italic;font-size:8pt;line-height:1.4;color:#222;max-width:200mm;text-align:center}
+.credits p{margin:0 0 1.5mm}
+.credits .entered{margin:3mm 0}
+.credits .url{font-style:normal;overflow-wrap:anywhere}
+/* the translator's notes (asked for with --notes end): numbered as on the page, in two columns, above the credits */
+.notes{font-family:"Noto Serif";font-size:8pt;line-height:1.4;color:#222;text-align:left;width:100%;max-width:255mm}
+.notes .notes-title{font-variant:small-caps;letter-spacing:.06em;text-align:center;margin:0 0 1.5mm}
+.notes .note-list{column-count:2;column-gap:8mm}
+.notes .note-list.one-column{column-count:1;width:calc(50% - 4mm)}   /* the last notes side, when its notes fit on the left */
+.text.notes-top{justify-content:flex-start}
+.notes .note-item{break-inside:avoid;margin:0 0 1mm;padding-left:4mm;text-indent:-4mm}
+.notes .note-item .n{display:inline-block;min-width:4mm;text-indent:0}
+.notes .url{overflow-wrap:anywhere}
+/* the translator's introduction (asked for with --intro start): after the cover, one column, on pechas of its own */
+.intro{font-family:"Noto Serif";font-size:9.5pt;line-height:1.5;color:#222;text-align:justify;width:100%;max-width:215mm;margin:0 auto}
+.intro .intro-title{font-variant:small-caps;letter-spacing:.06em;text-align:center;margin:0 0 3mm}
+.intro .intro-p{margin:0 0 2.2mm}
+.intro .bo-inline{font-family:"Noto Serif Tibetan";font-size:1.1em;line-height:1}
+.intro .intro-p:last-child{margin-bottom:0}
+sup.nr{font-size:.6em;line-height:0;vertical-align:super;font-style:normal;font-variant:normal;letter-spacing:0;margin-left:.05em}
+
+@media print{#shell>*:not(#output){display:none!important}}
+
+:root{--bo:20.0pt;--latin:11.0pt;--phon:11.0pt;--bo-small:17pt;--lh-bo:1.6;--out:1px;--in:1px}
+.terma{font-family:"Noto Serif Tibetan";font-style:normal;font-weight:normal;font-size:1.1em;line-height:0}
+.trans .terma{margin-left:.2em}  /* a little space before the mark, apart from the punctuation */
+</style></head><body>
+<div id="shell">
+<div id="refusal" role="alert" hidden></div>
+<template id="cover-html"></template><template id="credits-html"></template><template id="notes-html"></template><template id="intro-html"></template>
+<div id="source"></div><div id="stage"></div><div id="output"></div>
+</div>
+<script>
+// ---- port of pecha.py: parse_lotsawa + build_units (Lotsawa House format) ----
+const TIB = /[\u0F00-\u0FFF]/, YIG = "\u0F04\u0F05\u0F0D\u0F0D ", LONG_LINE = 16;
+const BREAK_AFTER = ["གི","ཀྱི","གྱི","ཡི","གིས","ཀྱིས","གྱིས","ཡིས","ལ","ནས","ལས","དུ","ཏུ","སུ","རུ","ན","དང","ཅིང","ཞིང","ཤིང","ཏེ","སྟེ","དེ"];
+const PROPER = new Set(("I Buddha Buddhas Dharma Sangha Saṅgha Guru Tibet Tibetan India Indian Maitreya Ānanda Avalokiteśvara "
+ + "Śāriputra Tathāgata Tathāgatas Bhagavat Bhagavatī Māra Tuṣita Vulture Rājgṛha Indra Yama Vajra Vajrakīlaya Padmasambhava "
+ + "Śākyamuni Tārā Mañjuśrī Vajrasattva Samantabhadra Amitābha Prajñāpāramitā Lord God Gods Śramaṇa Sugata Sugatas Jewels").split(" "));
+const esc = s => (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const dashes = s => (s || "").replace(/\s*—\s*/g, " — ");
+const syllables = bo => (bo.match(/\u0F0B/g) || []).length + 1;
+// a shad that closes a syllable and touches the next one, as some pages give it ("བས།བླ", "དང་།འཁྲུག"), gets the
+// space it lacks; the second shad of the pair "། །" opens the next phrase and stays against its syllable. No Tibetan
+// character changes; the space is a fixed four-per-em space (U+2005), so a justified line never stretches it
+// (Confession, pecha 9: an ordinary space took the whole slack of the line); the count goes to the report
+// (size.shad_spaces)
+let shadSpaces = 0;
+const spaceAfterShad = bo => bo.replace(/(?<=[\u0F0B\u0F40-\u0FBC])([\u0F0D\u0F0E])(?=[\u0F40-\u0F6C])/g, (m, sh) => { shadSpaces++; return sh + "\u2005"; });
+const protectShad = bo => spaceAfterShad(bo).replace(/ (?=[\u0F0D\u0F0E])/g, "\u00a0");
+const isTitleCase = l => {
+  if (/:\s*$/.test(l)) return false;
+  const w = l.trim().split(/\s+/); if (!w.length || w.length > 9) return false;
+  const small = new Set(["and","of","the","for","to","in","a","an","through","with","on","at","by","from","into","or"]);
+  return w.every(x => !/^\p{L}/u.test(x) || /^\p{Lu}/u.test(x) || small.has(x.toLowerCase()));
+};
+function titleBreaks(bo){
+  const parts = bo.split("\u0F0B"), out = [];
+  for (let i = 0; i < parts.length - 1; i++){
+    const syl = parts[i].trim().split(/\s+/).pop() || parts[i];
+    const ok = syl.endsWith("འི") || BREAK_AFTER.includes(syl) || /[\u0F0D།]$/.test(syl);
+    out.push(parts[i] + (ok ? "\u0F0B" : "\u0F0C"));
+  }
+  out.push(parts[parts.length - 1]); return out.join("");
+}
+function joinTranslations(parts){
+  const out = [];
+  parts.forEach((p, i) => {
+    p = p.trim();
+    if (i && out.length){
+      const prev = out[out.length - 1].replace(/\uE014$/, "").trimEnd();   // a terma mark placeholder does not end the sentence
+      const ended = /[.!?”’…:]$/.test(prev);
+      const m = p.match(/^([A-Za-zÀ-ÿĀ-ſ]+)/);
+      if (m && !ended){
+        const w = m[1], rest = p.slice(m[0].length).match(/[A-Za-zÀ-ÿĀ-ſ]+/g) || [];
+        const nextCap = rest[0] && /^\p{Lu}/u.test(rest[0]) && rest[0] !== "I";
+        const ofCap = rest[0] === "of" && rest[1] && /^\p{Lu}/u.test(rest[1]);
+        const name = PROPER.has(w) || w === w.toUpperCase() || /[āīūṛṝḷṅñṭḍṇśṣḥṃ]/i.test(w) || nextCap || ofCap;
+        if (/^\p{Lu}/u.test(w) && !name) p = p[0].toLowerCase() + p.slice(1);
+      }
+    }
+    out.push(p);
+  });
+  return out.join(" ");
+}
+function parse(text){
+  let lines = text.replace(/\r/g, "").split("\n").map(l => l.replace(/\u00a0/g, " ").replace(/\s+$/, ""));
+  const meta = {}, blocks = [], dropped = [];
+  for (let k = 0; k < lines.length; k++){
+    if (/^\s*\|/.test(lines[k])){
+      meta.translator = lines[k].replace(/^[\s|]+/, "").trim();
+      const tail = lines.slice(k + 1).map(x => x.trim()).filter(Boolean);
+      const value = x => x.split(":").slice(1).join(":").trim();
+      tail.forEach((x, j) => {
+        const ver = x.match(/^version\s*:?\s*(\d.*)$/i);   // with or without the colon, as on the page
+        if (ver) meta.version = ver[1].trim();
+        else if (/^site\s*:/i.test(x)) meta.site = value(x);                     // where the text was taken from
+        else if (/^address\s*:/i.test(x) && /^https?:\/\/\S+$/.test(value(x))) meta.url = value(x);
+        else if (/^licen[cs]e\s*:/i.test(x)) meta.licence = value(x);            // only when the source states one
+        else if (x.toLowerCase() === "source" && tail[j + 1]) meta.source_ref = tail[j + 1];
+        else if (!(j && tail[j - 1].toLowerCase() === "source")) dropped.push(x);  // printed nowhere: say so
+      });
+      lines = lines.slice(0, k); break;
+    }
+  }
+  const paras = []; let cur = [];
+  lines.forEach(l => { if (l.trim()) cur.push(l.trim()); else if (cur.length){ paras.push(cur); cur = []; } });
+  if (cur.length) paras.push(cur);
+  for (const p of paras){
+    if (TIB.test(p[0])){
+      // "~" holds the place of a layer the source does not have: Tibetan, no transliteration, then the translation.
+      // Such a paragraph is read like a Tibetan line followed by its translation alone, whatever its capitals.
+      const kept = p[1] === "~";
+      p.slice(3).forEach(x => dropped.push(x));                 // a Tibetan paragraph has at most three lines
+      const bo = protectShad(escapeText(p[0]));
+      const phon = kept ? "" : (p[1] || ""), trans = kept ? (p[2] || "") : (p[2] || "");
+      const twoLine = kept || (p.length === 2 && /^\p{Lu}/u.test(p[1]));   // Unicode: catches "Ānanda"
+      const alone = kept ? trans : phon;                         // the single Latin line of a two-line paragraph
+      if (!blocks.length && !meta.title_bo && /^[\u0F04\u0F05]/.test(bo)){
+        meta.title_bo = bo.replace(/^[\u0F04\u0F05]+[\u0F0D\s]*/, "").trim(); meta.title = kept ? trans : phon; continue;
+      }
+      if (isMantra(bo, phon)){ blocks.push({type:"mantra", bo, phon, extra:trans}); continue; }
+      const colophon = isColophon(bo);
+      if (twoLine && !colophon && syllables(bo) > LONG_LINE){ blocks.push({type:"prose", bo, phon:"", trans:[alone]}); continue; }
+      if (colophon || twoLine){ blocks.push({type:"note", bo, trans: kept ? trans : phon}); continue; }
+      const core = bo.replace(/^[\u0F04\u0F05]+[\u0F0D\s]*/, "");
+      if (!phon && !trans && core.startsWith("རྒྱ་གར་སྐད་དུ")){ blocks.push({type:"incipit", bo}); continue; }
+      blocks.push({type:"verse", bo, phon, trans});
+    } else {
+      for (const l of p){
+        if (/^by /i.test(l)) meta.author = l.slice(3).trim();
+        else if (isTitleCase(l)) blocks.push({type:"section", title:l});
+        else blocks.push({type:"rubric", text:l});
+      }
+    }
+  }
+  if (dropped.length) meta.dropped = dropped;
+  return {meta, blocks};
+}
+
+// ---- reader by layer markup (Lotsawa House pages) ----
+// The page marks every paragraph with its layer; nothing here guesses from line positions.
+const LAYER_CLASS = {TibetanVerse: "bo", TibetanExplanation: "bo-prose", EnglishPhonetics: "phon",
+                     EnglishText: "trans", Explanation: "trans-prose",
+                     // a mantra's Sanskrit transliteration sits where a translation would: it belongs to that layer
+                     EnglishMantra: "trans-mantra",
+                     tibetan_prayer_title_5: "bo-title", translated_prayer_title_5: "trans-title"};
+// Classes inside the main text that are not a layer: Noline belongs to the site; ExplanationBold is an attribution
+// ("revealed by…"), printed on the cover when it comes before the text and left out elsewhere.
+const IGNORED_CLASSES = new Set(["ExplanationBold", "Noline"]);
+// Classes the reader understands: layers, the Insert modifier, titles, credits, stanza gaps and the
+// bibliographic reference of the Tibetan source (kept for the credits page). Anything else is refused.
+const KNOWN_CLASSES = new Set([...Object.keys(LAYER_CLASS), ...IGNORED_CLASSES,
+  "Insert", "HeadingTib", "Heading3", "Credit", "gap", "Source", "biblio"]);
+const SITE = "https://www.lotsawahouse.org";
+
+const REFUSAL = {
+  "no-markup": () => "This page has Tibetan text, but not the Lotsawa House layer markup. "
+    + "Without it, the engine cannot safely tell the Tibetan, transliteration and translation apart, "
+    + "so no pecha was laid out.",
+  "no-tibetan": link => "This page has no Tibetan text, so there is no pecha to lay out."
+    + (link ? ` The Tibetan version is at ${link}.` : ""),
+  "unknown-class": (cls, text, more) => `This page uses markup the engine does not know yet: the class "${cls}", `
+    + `in the passage "${text}"` + (more ? `, and ${more} more passage${more > 1 ? "s" : ""} with unknown markup` : "")
+    + ". So as not to lose text or move it to another layer, no pecha was laid out.",
+};
+
+function refuse(kind, ...args){ return {kind, message: REFUSAL[kind](...args)}; }
+
+function tibetanVersionLink(doc){
+  // The language menu links the same text in every language: /fr/<path>, /pt/<path>, /bo/<path>.
+  // A /bo/ link counts only when another language links the same <path>, so a sidebar link is never offered.
+  const paths = [...doc.querySelectorAll("a[href]")].map(a => a.getAttribute("href").replace(SITE, ""));
+  const lang = /^\/(bo|fr|de|es|it|pt|nl|zh)(\/.+)$/;
+  const byLang = paths.map(p => p.match(lang)).filter(Boolean);
+  const bo = byLang.find(([, l, rest]) => l === "bo" && rest.split("/").filter(Boolean).length >= 2
+                         && byLang.some(([, l2, rest2]) => l2 !== "bo" && rest2 === rest));
+  return bo ? SITE + bo[0] : null;
+}
+const INCIPIT_START = /^[༄༅།\s]*(རྒྱ་གར་སྐད་དུ|བོད་སྐད་དུ)/;
+
+function textOf(el, keepBreaks){
+  const c = el.cloneNode(true);
+  // footnote markers: left out, or, with the notes asked for, kept as an invisible marker (U+E000 number U+E001)
+  // that becomes a superscript once the HTML is built
+  c.querySelectorAll("sup").forEach(s => { const n = s.textContent.trim();
+    if (opts.notes === "end" && /^\d{1,3}$/.test(n)) s.replaceWith("\uE000" + n + "\uE001"); else s.remove(); });
+  // a line break of the source (<br>) separates two lines: a new line in the Latin layers, a space elsewhere; before,
+  // the two lines were joined with no space ("dreamsYou")
+  c.querySelectorAll("br").forEach(b => b.replaceWith(keepBreaks ? "\n" : " "));
+  return c.textContent.replace(/\u00a0/g, " ").replace(/[^\S\n]+/g, " ").replace(/ *\n */g, "\n").replace(/\n+/g, "\n").trim();
+}
+const LATIN_LINES = ["EnglishText", "Explanation", "EnglishPhonetics"];   // layers whose line breaks are kept
+function layerOf(el){
+  for (const c of el.classList) if (LAYER_CLASS[c]) return LAYER_CLASS[c];
+  return null;
+}
+function readCredit(meta, line){
+  const t = line.replace(/^[\s|]+/, "").trim();
+  // the version, with or without the colon ("Version 1.3-20211211" on the Essence of the Kangyur page); a line that
+  // only names the word stays the translator
+  const v = t.match(/^version\s*:?\s*(\d.*)$/i);
+  if (v) meta.version = v[1].trim();
+  else if (t) meta.translator = t;
+}
+function isMantra(bo, phon){
+  const core = bo.replace(/^[༈༄༅།\s]+/, "");
+  return /^(ཨོཾ|ཏདྱ་ཐཱ)/.test(core) || /^(om |teyatha|teyata|tadyatha)/i.test(phon || "")
+      || (bo.match(/ཿ/g) || []).length >= 3;
+}
+function isColophon(bo){ return /^(ཅེས|ཞེས|འདིའང|འདི་ཡང|འདི་ནི)/.test(bo) || /།།\u00a0།།\s*$/.test(bo); }
+const escapeText = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");  // Tibetan is inserted as HTML
+const NOTE_MARK = /\uE000(\d{1,3})\uE001/g;
+const noteMarks = h => (h || "").replace(NOTE_MARK, "<sup class=nr>$1</sup>");   // the marker, printed (no quotes: it may sit in an attribute)
+const plainNotes = t => (t || "").replace(NOTE_MARK, "");                         // the marker, left out
+// One note of the page's list, as HTML: its text without the arrow back, italics kept, a link by its text (on the
+// site, the address itself); nothing else of the markup.
+function noteHtml(li){
+  const walk = n => n.nodeType === 3 ? escapeText(n.data)
+    : n.nodeType !== 1 || n.classList.contains("Noline") ? ""
+    : /^(EM|I)$/.test(n.nodeName) ? `<i>${[...n.childNodes].map(walk).join("")}</i>`
+    : n.nodeName === "A" && /^https?:/.test(n.getAttribute("href") || "") ? `<span class="url">${[...n.childNodes].map(walk).join("")}</span>`
+    : [...n.childNodes].map(walk).join("");
+  return [...li.childNodes].map(walk).join("").replace(/\s+/g, " ").trim();
+}
+function readNotes(root){
+  return [...root.querySelectorAll("ol.Footnote > li")].map(li => ({n: ((li.id || "").match(/\d+/) || [""])[0], html: noteHtml(li)}))
+    .filter(x => x.html);
+}
+
+// What the page states about itself: its address and its licence. The licence is read from the page's own
+// Creative Commons link and never presumed; a page without one has no licence line.
+function pageFacts(doc){
+  const facts = {};
+  const canon = doc.querySelector('link[rel="canonical"]');
+  if (canon && /^https:\/\/(www\.)?lotsawahouse\.org\//.test(canon.getAttribute("href") || "")) facts.url = canon.getAttribute("href");
+  for (const a of doc.querySelectorAll('a[rel~="license"]')){
+    const m = (a.getAttribute("href") || "").match(/^https?:\/\/creativecommons\.org\/licenses\/([a-z-]+)\/([\d.]+)\/?$/);
+    if (m){ facts.licence = `CC ${m[1].toUpperCase()} ${m[2]}`; break; }
+  }
+  return facts;
+}
+// The translator's introduction: the paragraphs of the block behind the page's "Read more" button, before the text.
+// Its heading, its version line, its bibliography and its own notes are not read; the note markers leave the text,
+// and each link keeps its words, followed by the whole address in square brackets, so that it can be read on paper
+// (author's choice, 19/10/2026). The block leaves the page, so none of it reaches a layer of the text.
+function readIntro(root){
+  const parts = ["intro-all", "intro-readmore", "intro-hidden"].map(id => root.querySelector("#" + id)).filter(Boolean);
+  const out = [];
+  if (!parts.length || !root.querySelector("#intro-all")) return out;
+  for (const part of parts){
+    part.querySelectorAll(".footnotes").forEach(n => n.remove());
+    for (const p of part.querySelectorAll("p:not([class])")){
+      const c = p.cloneNode(true);
+      c.querySelectorAll("sup").forEach(x => x.remove());
+      c.querySelectorAll('a[href^="#"]').forEach(x => x.remove());
+      c.querySelectorAll("a[href]").forEach(a => { const u = a.getAttribute("href");
+        a.replaceWith(c.ownerDocument.createTextNode(a.textContent + " [" + (u.startsWith("/") ? SITE + u : u) + "]")); });
+      // Tibetan in the middle of a paragraph is set in the Tibetan font, or the browser falls back to one that does
+      // not stack the letters (author's request, 19/10/2026, 15h56)
+      const tw = c.ownerDocument.createTreeWalker(c, 4), texts = [];
+      while (tw.nextNode()) texts.push(tw.currentNode);
+      for (const n of texts){
+        if (!/[\u0F00-\u0FFF]/.test(n.nodeValue)) continue;
+        const frag = c.ownerDocument.createDocumentFragment();
+        n.nodeValue.split(/([\u0F00-\u0FFF][\u0F00-\u0FFF\s]*[\u0F00-\u0FFF]|[\u0F00-\u0FFF])/).forEach((part, k) => {
+          if (!part) return;
+          if (k % 2){ const sp = c.ownerDocument.createElement("span"); sp.className = "bo-inline"; sp.textContent = part; frag.appendChild(sp); }
+          else frag.appendChild(c.ownerDocument.createTextNode(part));
+        });
+        n.replaceWith(frag);
+      }
+      const t = c.textContent.replace(/\u00a0/g, " ").trim();
+      if (t && !/^Version:/i.test(t)) out.push(c.innerHTML.replace(/\s+/g, " ").trim());
+    }
+  }
+  parts.forEach(n => n.remove());
+  return out;
+}
+function parseMarkup(pageHtml){
+  const doc = new DOMParser().parseFromString(pageHtml, "text/html");
+  const root = doc.getElementById("maintext") || doc.body;
+  const intro = readIntro(root);         // the translator's introduction, read before the text is read
+  const notes = readNotes(root);         // the translator's notes, read before the list leaves the page
+  root.querySelectorAll(".footnotes, ol.Footnote").forEach(n => n.remove());
+  const meta = {notes, intro}, blocks = [], unknown = [];
+  if (!root.querySelector("p.TibetanVerse, p.TibetanExplanation")){
+    const text = root.cloneNode(true); text.querySelectorAll("a, nav, header, footer").forEach(n => n.remove());
+    const refusal = TIB.test(text.textContent) ? refuse("no-markup") : refuse("no-tibetan", tibetanVersionLink(doc));
+    return {meta, blocks, unknown, refusal};
+  }
+  Object.assign(meta, {site: "Lotsawa House"}, pageFacts(doc));
+  let cur = null;                       // the unit that phonetics and translation attach to
+  let incipit = null;
+  let stanza = 0, started = false;      // stanza number (it changes at every gap and heading); text begun
+  const close = () => { if (cur && cur.block) blocks.push(cur.block); cur = null; };
+  for (const p of root.querySelectorAll("p")){
+    const t = textOf(p, LATIN_LINES.some(c => p.classList.contains(c)));
+    const strange = [...p.classList].filter(c => !KNOWN_CLASSES.has(c));
+    if (!p.classList.length && t) strange.push("(sem classe)");     // text with no layer at all is not ignored either
+    if (strange.length){ unknown.push({classes: strange, text: t.slice(0, 80)}); continue; }
+    if (p.classList.contains("gap")){ close(); stanza++; if (blocks.length) blocks.push({type: "break"}); continue; }  // stanza boundary
+    if (p.classList.contains("HeadingTib")){ meta.title_bo = t.replace(/^[༄༅]+[།\s]*/, "").trim(); continue; }
+    if (p.classList.contains("Heading3")){
+      // every heading ends the stanza, printed or not; the first ones, before the text, are the cover's title and
+      // subtitle; one marked Insert is the translator's own heading (printed by option); any other is a section
+      close(); stanza++;
+      if (!t){ if (blocks.length) blocks.push({type: "break"}); continue; }      // an empty heading still ends the stanza
+      // a Tibetan line alone right before a heading is the same heading in Tibetan
+      const before = blocks[blocks.length - 1];
+      const headBo = before && before.type === "prose" && !before.phon && !before.trans.length ? before.bo : "";
+      // a translator's heading before the text, when the page gave no title, is the title of the whole text (the
+      // original has none): it goes to the cover, not to the flow; a second one is a section heading as usual
+      if (p.classList.contains("Insert") && !started && !meta.title){ meta.title = t; meta.title_from = "insert"; continue; }
+      if (p.classList.contains("Insert")){ if (headBo) blocks.pop(); blocks.push({type: "insert", text: t, bo: headBo}); continue; }
+      if (!started){ if (!meta.title){ meta.title = t; meta.title_from = "heading"; } else meta.subtitle = meta.subtitle ? meta.subtitle + " " + t : t; continue; }
+      // a Tibetan line alone right before (TibetanExplanation, no transliteration or translation) is the same heading
+      // in Tibetan, as in the numbered headings of a sādhana: one bilingual heading
+      if (headBo) blocks.pop();
+      blocks.push({type: "section", title: t, bo: headBo, soft: true});                 // printed, without opening a new side
+      continue;
+    }
+    if (p.classList.contains("ExplanationBold")){   // an attribution before the text goes to the cover; later ones stay out
+      if (!started && t) meta.attribution = meta.attribution ? meta.attribution + " " + t : t;
+      continue;
+    }
+    if (p.classList.contains("Credit")){ readCredit(meta, t); continue; }
+    if (p.classList.contains("Source") || p.classList.contains("biblio")){ if (t) (meta.sources = meta.sources || []).push(t); continue; }
+    const layer = layerOf(p);
+    if (!layer) continue;                 // a known class outside the layers (an ignored site label)
+    if (!t) continue;
+    started = true;
+    if (layer === "bo"){
+      close();
+      const bo = protectShad(escapeText(t));
+      if (!blocks.some(b => !["incipit", "insert", "break"].includes(b.type)) && INCIPIT_START.test(t)){
+        if (!incipit){ incipit = {type: "incipit", bo: "", lines: [], extra: []}; blocks.push(incipit); }
+        const line = {bo, phon: "", trans: ""};
+        incipit.lines.push(line); incipit.bo = incipit.lines.map(l => l.bo).join(" ");
+        cur = {block: null, line}; continue;
+      }
+      cur = {block: {type: "verse", bo, phon: "", trans: "", stanza}};
+      continue;
+    }
+    if (layer === "bo-title"){ close(); cur = {block: {type: "title", bo: protectShad(escapeText(t)), trans: ""}}; continue; }
+    if (layer === "trans-title"){
+      if (cur && cur.block && cur.block.type === "title" && !cur.block.trans) cur.block.trans = t;
+      else { close(); blocks.push({type: "title", bo: "", trans: t}); }
+      continue;
+    }
+    if (layer === "trans-mantra"){
+      if (cur && cur.block && cur.block.type === "verse"){ cur.block.mantra = true; cur.block.trans = cur.block.trans ? cur.block.trans + " " + t : t; }
+      else { close(); blocks.push({type: "mantra", bo: "", phon: "", extra: t}); }
+      continue;
+    }
+    if (layer === "bo-prose"){ close(); cur = {block: {type: "prose", bo: protectShad(escapeText(t)), phon: "", trans: []}}; continue; }
+    if (layer === "phon"){
+      const unit = cur && (cur.line || cur.block);
+      if (unit) unit.phon = unit.phon ? unit.phon + " " + t : t;
+      else blocks.push({type: "rubric", text: t, layer: "phon"});     // transliteration with no Tibetan before it
+      continue;
+    }
+    // translation layers
+    if (cur && cur.line){
+      if (!cur.line.trans) cur.line.trans = t; else incipit.extra.push(t);
+      continue;
+    }
+    if (cur && cur.block.type === "verse" && !cur.block.trans && layer === "trans"){ cur.block.trans = t; continue; }
+    if (cur && cur.block.type === "prose"){ cur.block.trans.push(t); continue; }
+    close(); blocks.push({type: "rubric", text: t});
+  }
+  close();
+  for (const b of blocks){
+    if (b.type !== "verse") continue;
+    if (b.mantra || isMantra(b.bo, b.phon)){ b.type = "mantra"; b.extra = b.trans; }
+    else if (isColophon(b.bo)){ b.type = "note"; }
+  }
+  const refusal = unknown.length ? refuse("unknown-class", unknown[0].classes[0], unknown[0].text, unknown.length - 1) : null;
+  return {meta, blocks, unknown, refusal};
+}
+function isProseDoc(blocks){
+  const lens = blocks.filter(b => b.type === "verse").map(b => syllables(b.bo)).sort((a,b) => a-b);
+  return lens.length > 0 && lens[Math.floor(lens.length/2)] > 11;
+}
+// Pairs of verses that cross a mark of the source (gap or heading) and stanzas with an odd number of paired verses,
+// for the report; only the markup reader knows the stanzas, so the intermediate format gives none.
+let pairing = {alerts: [], odd_stanzas: 0};
+// Terma mark: in a treasure text every Tibetan verse ends with ༔ (U+0F14); the transliteration and the
+// translation of such a verse receive it too. auto = when most Tibetan verses end with it; on = always; off = never.
+const TERMA = "\u0F14", TERMA_SLOT = "\uE014";
+let terma = {requested: "auto", detected: false, applied: false};
+const PAIR_TAIL = /([\u0F0D\u0F0E]?)\u00a0([\u0F0D\u0F0E])\s*$/;   // "། །" at the end of a verse (the space was made non-breaking)
+const endsTerma = bo => /\u0F14[\s\u0F0B-\u0F0E]*$/.test(bo || "");
+const termaSpan = `<span class="terma">${TERMA}</span>`;
+const marked = html => html.split(TERMA_SLOT).join(termaSpan);
+function buildUnits(blocks, L){                       // L = {bo, phon, trans}
+  const units = [];
+  pairing = {alerts: [], odd_stanzas: 0};
+  const tib = blocks.filter(b => b.type === "verse" && b.bo);
+  const detected = tib.length > 0 && tib.filter(b => endsTerma(b.bo)).length * 2 > tib.length;
+  terma = {requested: opts.terma, detected, applied: opts.terma === "on" || (opts.terma === "auto" && detected)};
+  const mk = b => terma.applied && endsTerma(b.bo) ? TERMA_SLOT : "";      // the slot after a verse's Latin line
+  if (L.bo && !L.phon && !L.trans){                   // Tibetan-only: one continuous flow, opened by the incipit
+    const fb = blocks.filter(b => ["incipit","verse","mantra","prose","note","title","section","insert"].includes(b.type) && b.bo);
+    // A verse closes with "། །": the first shad ends it, the second opens the next. Both go, in the same order, to the
+    // start of the next verse, joined to its first syllable: no line breaks between the two shads, no line ends with
+    // the second, and the space between verses opens between the shads. Not one character changes.
+    let carry = "";
+    const flow = fb.map((b, k) => {
+      let bo = b.bo;
+      const small = x => x && (x.type === "note" || x.type === "prose");      // the pair stays out of auxiliary text, set at 85%
+      const m = k + 1 < fb.length && small(b) === small(fb[k + 1]) ? bo.match(PAIR_TAIL) : null;
+      if(m) bo = bo.slice(0, m.index);
+      if(carry){
+        const first = bo.match(/^[^\u0F0B\u0F0D\u0F0E\s]*[\u0F0B\u0F0D\u0F0E]?/)[0];
+        bo = `<span class="lead">${carry}${first}</span>` + bo.slice(first.length);
+      }
+      carry = m ? `<span class="first">${m[1]}</span>\u00a0<span class="second">${m[2]}</span>` : "";
+      return `<span class="cell bo${b.type === "note" || b.type === "prose" ? " note" : ""}${m ? " joined" : ""}">${bo}</span>${m ? "" : " "}`;   // auxiliary Tibetan at 85%
+    }).join("");
+    return flow ? [`<div class="flow">${flow}</div>`] : [];
+  }
+  const proseDoc = isProseDoc(blocks);
+  // The incipit ("rgya gar skad du… bod skad du…") opens the first text side, each Tibetan line with its
+  // transliteration and translation below it, like the rest of the text; the cover keeps only the title.
+  const inc = blocks.find(b => b.type === "incipit");
+  if (inc){
+    const lines = inc.lines || inc.bo.split(/\s+(?=བོད་སྐད་དུ)/).map(bo => ({bo: bo.trim(), phon: "", trans: ""}));
+    lines.forEach((l, k) => {
+      let s = "";
+      if (L.bo && l.bo) s += `<p class="bo">${l.bo}</p>`;
+      if (L.phon && l.phon) s += `<p class="phon">${esc(l.phon)}</p>`;
+      if (L.trans && l.trans) s += `<p class="trans">${esc(l.trans)}</p>`;
+      if (L.trans && k === lines.length - 1) for (const x of inc.extra || []) s += `<p class="trans">${esc(x)}</p>`;
+      if (s) units.push(`<div class="para incipit" data-unit="incipit">${s}</div>`);
+    });
+  }
+  const cell = b => {
+    let s = "";
+    if (L.bo) s += `<p class="bo">${b.bo}</p>`;
+    if (L.phon && b.phon) s += `<p class="phon">${marked(esc(b.phon + mk(b)))}</p>`;
+    // each verse keeps its own translation, so a pair split into two rows keeps every translation
+    const own = L.trans && b.trans ? marked(esc(dashes(b.trans).trim() + mk(b))) : "";
+    const data = own ? ` data-trans="${own.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}"` : "";
+    return `<div class="cell"${data}>${s}</div>`;
+  };
+  let verses = [];
+  const closePairs = () => {
+    for (let i = 0; i < verses.length; i += 2){
+      const pair = verses.slice(i, i + 2);
+      if (pair.length === 2 && pair[0].stanza !== pair[1].stanza)        // a pair across a mark of the source
+        pairing.alerts.push({first: pair[0].phon || pair[0].bo, second: pair[1].phon || pair[1].bo});
+      let out = `<div class="pair">${pair.map(cell).join("")}</div>`;
+      if (L.trans){
+        out += `<p class="trans">${marked(esc(joinTranslations(pair.map(v => v.trans ? dashes(v.trans).trim() + mk(v) : ""))))}</p>`;
+        units.push(`<div class="row">${out}</div>`);
+      } else units.push(`<div class="row block">${out}</div>`);
+    }
+    verses = [];
+  };
+  for (const b of blocks){
+    if (b.type === "verse" && (proseDoc || syllables(b.bo) > LONG_LINE)){
+      closePairs(); let s = "";
+      if (L.bo) s += `<p class="bo prose">${b.bo}</p>`;
+      if (L.phon && b.phon) s += `<p class="phon">${marked(esc(b.phon + mk(b)))}</p>`;
+      if (L.trans && b.trans) s += `<p class="trans">${marked(esc(dashes(b.trans).trim() + mk(b)))}</p>`;
+      units.push(`<div class="para">${s}</div>`); continue;
+    }
+    if (b.type === "verse"){ verses.push(b); continue; }
+    closePairs();
+    if (b.type === "break") continue;                     // stanza boundary: pairs never cross it
+    if (b.type === "insert"){
+      // the translator's own heading (Heading3 Insert): it ends the stanza and, with inserts=show, is printed in the
+      // translation layer: with inserts=show it travels with the stanza it opens (a soft heading never closes a side);
+      // with inserts=sides it opens a new side, like a section
+      { const ins = opts.inserts !== "hide" && L.trans, bo = L.bo && b.bo;   // the Tibetan line of the heading stays when the English one is left out
+        if (ins || bo) units.push(`<div class="section${opts.inserts === "sides" && ins ? "" : " soft"}${ins ? " insert" : ""}${bo ? " section-head has-bo" : ""}">${bo ? `<p class="bo">${b.bo}</p>` : ""}${ins ? `<p class="trans insert">${esc(dashes(b.text))}</p>` : ""}</div>`); }
+      continue;
+    }
+    if (b.type === "mantra"){
+      let s = "";
+      // a long mantra (a dhāraṇī) is laid out like a paragraph, so it can continue on the next side
+      const long = syllables(b.bo) > LONG_LINE;
+      if (L.bo && b.bo) s += `<p class="bo${long ? " prose" : ""}">${b.bo}</p>`;
+      if (L.phon && b.phon) s += `<p class="phon">${esc(b.phon)}</p>`;
+      if (L.trans && b.extra) s += long ? `<p class="trans">${esc(dashes(b.extra))}</p>`
+                                        : `<p class="trans"><span class="note">${esc(dashes(b.extra))}</span></p>`;
+      units.push(long ? `<div class="para mantra">${s}</div>` : `<div class="block">${s}</div>`);
+    } else if (b.type === "note"){
+      let s = "";
+      if (L.bo) s += `<p class="bo">${b.bo}</p>`;
+      if (L.phon && b.phon) s += `<p class="phon">${esc(b.phon)}</p>`;
+      if (L.trans) s += `<p class="trans">${esc(dashes(b.trans))}</p>`;
+      units.push(`<div class="note">${s}</div>`);
+    } else if (b.type === "prose"){
+      let s = "";
+      if (L.bo && b.bo) s += `<p class="bo prose">${b.bo}</p>`;
+      if (L.phon && b.phon) s += `<p class="phon">${esc(b.phon)}</p>`;
+      if (L.trans) (b.trans || []).forEach(tl => {
+        const cls = /^["“]|^\p{Lu}/u.test(tl) ? "trans" : "trans sanskrit";
+        s += `<p class="${cls}">${esc(dashes(tl))}</p>`;
+      });
+      units.push(`<div class="para aux">${s}</div>`);      // explanatory prose: auxiliary text
+    } else if (b.type === "title"){
+      let s = "";
+      if (L.bo && b.bo) s += `<p class="bo" style="text-align:center">${b.bo}</p>`;
+      if (L.trans && b.trans) s += `<p class="trans" style="text-align:center;font-variant:small-caps">${esc(dashes(b.trans))}</p>`;
+      if (s) units.push(`<div class="section">${s}</div>`);
+    } else if (b.type === "section"){
+      // a heading in the translation's language, with its Tibetan line above when the source gives one
+      // Tibetan and English together, as one heading
+      let h = "";
+      if (L.bo && b.bo) h += `<p class="bo">${b.bo}</p>`;
+      if (L.trans) h += `<p class="trans">${esc(dashes(b.title))}</p>`;
+      if (h) units.push(`<div class="section section-head${b.soft ? " soft" : ""}${b.bo && L.bo ? " has-bo" : ""}">${h}</div>`);
+    } else if (b.type === "rubric" && b.layer === "phon"){
+      if (L.phon) units.push(`<p class="phon">${esc(b.text)}</p>`);
+    } else if (b.type === "rubric"){
+      units.push(`<p class="trans rubric">${esc(dashes(b.text))}</p>`);  // an instruction: auxiliary text
+    }
+  }
+  closePairs();
+  // the explanation that opens the text (auxiliary units before the first unit of the text): its last unit is
+  // marked, so it stands apart from the text; explanations further on keep the common breath
+  // an invocation (Namo…) that opens the text, alone, before the explanation does not take the explanation's place:
+  // the explanation after it is still the introduction
+  { const AUX = /^<(?:div class="para aux"|p class="trans rubric")/;
+    const lead = blocks.filter(b => !["title", "insert", "break"].includes(b.type));
+    const invocation = lead.length > 1 && lead[1].type === "prose"
+      && INVOCATION.test(String(lead[0].bo || "").replace(/<[^>]*>/g, ""));
+    let k = 0;
+    if(invocation && AUX.test(units[1] || "")) k = 1;
+    while(k < units.length && AUX.test(units[k])) k++;
+    if(k > 0 && k < units.length) units[k - 1] = units[k - 1].replace('class="', 'class="opening '); }
+  // stanzas with an odd number of verses, counted over the whole text (a mantra or a note inside a stanza does not
+  // split it in two); only the markup reader numbers the stanzas
+  const sizes = {};
+  blocks.forEach(b => { if (b.type === "verse" && b.stanza !== undefined) sizes[b.stanza] = (sizes[b.stanza] || 0) + 1; });
+  pairing.odd_stanzas = Object.values(sizes).filter(n => n % 2).length;
+  return units;
+}
+// the homage that opens many practices: ན་མོ or ན་མ, after the opening signs only
+const INVOCATION = /^[\s\u0F00-\u0F3F]*ན་མ(?:ོ)?[\u0F0B\u0F0D\u0F14\s]/;
+function coverHtml(meta, L){
+  const titleBo = (meta.title_bo || "").trim();
+  // the opening marks only come with a Tibetan title: a page without one gets no lone ༄༅ on the cover
+  let h = titleBo ? `<p class="bo">${YIG}${titleBreaks(titleBo)}</p>` : "";
+  if (L.trans && meta.title && coverTitleShown(meta)) h += `<p class="title-latin">${esc(meta.title)}</p>`;
+  if (L.trans && meta.subtitle) h += `<p class="subtitle">${esc(meta.subtitle)}</p>`;
+  if (L.trans && meta.attribution) h += `<p class="author">${esc(meta.attribution)}</p>`;   // "revealed by…" (ExplanationBold)
+  if (L.trans && meta.author) h += `<p class="author">${esc(meta.author)}</p>`;
+  return `<div class="cover-block">${h}</div>`;         // the incipit opens the first text side
+}
+// The credits page states what the page itself says (translator, version, address, licence, Tibetan source)
+// and when the pecha was prepared. Nothing is presumed: a fact the page does not give is left out.
+const CREDIT_WORDS = {
+  en: {intro: "Introduction", notes: "Notes", source: "Source", version: "Version", licence: "Licence", bibliography: "Bibliography",
+       ai: "with the help of AI", made: v => ` (pecha.skill, version ${v})`, review: "It must be reviewed before use for study and practice.",
+       prepared: (d, t) => `Prepared on ${d}, ${t}`, dedication: "May all beings benefit!",
+       months: "January February March April May June July August September October November December".split(" "),
+       date: (d, m, y) => `${d} ${m} ${y}`},
+  pt: {intro: "Introdução", notes: "Notas", source: "Fonte", version: "Versão", licence: "Licença", bibliography: "Bibliografia",
+       ai: "com apoio de IA", made: v => ` (pecha.skill, versão ${v})`, review: "Deve ser revisado antes do uso para estudo e prática.",
+       prepared: (d, t) => `Preparado em ${d}, às ${t}`, dedication: "Que todos os seres se beneficiem!",
+       months: "janeiro fevereiro março abril maio junho julho agosto setembro outubro novembro dezembro".split(" "),
+       date: (d, m, y) => `${d} de ${m} de ${y}`},
+};
+function writtenDate(ymd, lang){
+  const W = CREDIT_WORDS[lang] || CREDIT_WORDS.en, [y, m, d] = ymd.split("-").map(Number);
+  return W.date(d, W.months[m - 1], y);
+}
+const ABBREV_MAX = 24;                 // characters that fit along the margin box
+// At most `max` characters, cut after a tsheg, shad, terma mark or space, never inside a syllable.
+function atSyllable(t, max){
+  if (t.length <= max) return t;
+  const head = t.slice(0, max), cut = head.match(/^[\s\S]*[\u0F0B\u0F0D\u0F0E\u0F14\s]/);
+  return (cut ? cut[0] : head).replace(/[\u0F0B\s]+$/, "");
+}
+// With no abbreviation typed, the margin takes the Tibetan title without its opening marks (༄༅, ༁ྃ༔ and the like),
+// cut between syllables and closed with a shad. The shad counts in the 24 characters.
+const OPENING_MARKS = /^[\u0F00-\u0F14\u0F82\u0F83\s]+/, CLOSING_MARKS = /[\u0F0B-\u0F14\s]+$/;
+const bareTitle = t => (t || "").replace(OPENING_MARKS, "").replace(CLOSING_MARKS, "");
+function titleAbbrev(title){
+  const bare = bareTitle(title);
+  return bare ? atSyllable(bare, ABBREV_MAX - 1).replace(CLOSING_MARKS, "") + "\u0F0D" : "";
+}
+function creditsHtml(meta, lang, stamp, ai, version){        // stamp: local date and time, "YYYY-MM-DDTHH:MM…"
+  const W = CREDIT_WORDS[lang] || CREDIT_WORDS.en, e = t => escapeText(String(t));
+  const sentence = t => /[.!?]$/.test(t) ? t : t + ".";
+  // the source is never presumed: a text that does not say where it came from names no site
+  const first = (meta.site ? [`${W.source}: ${e(meta.site)}`] : []).concat(meta.translator ? [e(meta.translator)] : []).join(", ");
+  let h = '<div class="credits"><p>' + (first ? sentence(first) : "");
+  if (meta.url) h += `<br><span class="url">${e(meta.url)}</span>`;
+  h += "</p>";
+  const vl = [];
+  if (meta.version) vl.push(`${W.version} ${e(meta.version)}.`);
+  if (meta.licence) vl.push(`${W.licence}: ${e(meta.licence)}.`);
+  if (vl.length) h += `<p>${vl.join(" ")}</p>`;
+  const sources = meta.sources || (meta.source_ref ? [meta.source_ref] : []);
+  if (sources.length){
+    const labelled = /:$/.test(sources[0]);                 // the page already gives its own label ("Bibliography:")
+    // the label and the first reference share a line; further references follow, one per line
+    const refs = labelled ? [sources[0] + " " + (sources[1] || "")].concat(sources.slice(2)) : sources;
+    h += '<p class="bibliography">' + (labelled ? "" : `${W.bibliography}: `) + refs.map(e).join("<br>") + "</p>";
+  }
+  // one paragraph in two lines: date, time, the help of AI and the skill version; then the request for review and
+  // the dedication. Every pecha
+  // comes from the skill, so the notice is always there; `ai` (AI converted the text) is in the report.
+  const when = W.prepared(writtenDate(stamp.slice(0, 10), lang), stamp.slice(11, 16));
+  h += `<p class="entered">${when}, ${W.ai}${version ? W.made(esc(version)) : ""}.<br>${W.review} ${W.dedication}</p>`;
+  return h + "</div>";
+}
+// The translator's notes, numbered as on the page, under the heading in the language of the credits
+// The translator's introduction, one paragraph after another, under the heading in the language of the credits
+function introHtml(paras, lang){
+  if (!paras || !paras.length) return "";
+  const W = CREDIT_WORDS[lang] || CREDIT_WORDS.en;
+  return `<div class="intro"><p class="intro-title">${W.intro}</p>` + paras.map(x => `<div class="intro-p">${x}</div>`).join("") + "</div>";
+}
+function notesHtml(notes, lang){
+  if (!notes || !notes.length) return "";
+  const W = CREDIT_WORDS[lang] || CREDIT_WORDS.en;
+  return `<div class="notes"><p class="notes-title">${W.notes}</p><div class="note-list">`
+    + notes.map(x => `<div class="note-item"><span class="n">${x.n}</span> ${x.html}</div>`).join("") + "</div></div>";
+}
+function localStamp(){
+  const n = new Date(), p = x => String(x).padStart(2, "0");
+  return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}T${p(n.getHours())}:${p(n.getMinutes())}`;
+}
+
+// ---- input: the skill puts the page (or the intermediate text) and the options in sessionStorage ----
+const D = document, $ = id => D.getElementById(id);
+const opts = JSON.parse(sessionStorage.getItem("pecha-opts") || "null") || {bo:1, phon:1, trans:1, mode:"single", lines:"thin"};
+if (!CREDIT_WORDS[opts.lang]) opts.lang = "auto";        // the credits follow the translation unless asked otherwise
+if (!["show", "sides", "hide"].includes(opts.inserts)) opts.inserts = "show";   // the translator's headings are printed by default
+if (!["show", "hide"].includes(opts.coverTitle)) opts.coverTitle = "show";   // the translator's title of the whole text, on the cover
+if (!["hide", "end"].includes(opts.notes)) opts.notes = "hide";      // the translator's notes are left out by default
+if (!["hide", "start"].includes(opts.intro)) opts.intro = "hide";    // the translator's introduction too (author, 19/10/2026)
+function coverTitleShown(meta){ return !(meta.title_from === "insert" && opts.coverTitle === "hide"); }
+if (!["auto", "on", "off"].includes(opts.terma)) opts.terma = "auto";   // the terma mark follows the Tibetan by default
+// Language of the credits: asked for, or, by default, the language of the translation, read from the
+// source's address (/pt/... is Portuguese, no prefix is English); a language with no credits text falls back to English.
+const LANGUAGE_CODES = new Set(("en pt de es fr it nl zh bo ru ja ko pl cs hu tr vi id ar he el ro sv da no fi uk "
+  + "hi ne mn th").split(" "));     // a two-letter segment outside this list (/br/, /us/) is not a language
+function creditsLanguage(meta, asked){
+  if (CREDIT_WORDS[asked]) return {credits_lang: asked, credits_lang_from: "request"};
+  // the first segment of the path, when it is a language code: /pt/, /pt-br/, /PT_BR/ (no prefix is English)
+  const m = (meta.url || "").match(/^https?:\/\/[^/?#]+\/([a-z]{2})(?:[-_][a-z]{2})?(?:[/?#]|$)/i);
+  const code = m ? m[1].toLowerCase() : "";
+  const page = LANGUAGE_CODES.has(code) ? code : "en";
+  return CREDIT_WORDS[page] ? {credits_lang: page, credits_lang_from: "auto"}
+                            : {credits_lang: "en", credits_lang_from: "auto", credits_lang_fallback: page};
+}
+const srcText = sessionStorage.getItem("pecha-src");
+const pageHtml = sessionStorage.getItem("pecha-page");   // a saved Lotsawa House page, read by its markup
+let blocksGlobal = [];
+
+function fill(){
+  const L = {bo: !!opts.bo, phon: !!opts.phon, trans: !!opts.trans};
+  if (!L.bo && !L.phon && !L.trans) L.bo = true;
+  const {meta, blocks, refusal} = pageHtml ? parseMarkup(pageHtml) : parse(srcText || "");   // the intermediate format comes only through the internal input
+  window.__refusal = refusal || null;
+  if (refusal){ $("refusal").textContent = refusal.message; $("refusal").hidden = false; }
+  blocksGlobal = blocks;
+  $("cover-html").innerHTML = noteMarks(coverHtml(meta, L));
+  // the PDF takes its title from the page: the text's Latin title, as on the cover, or else its Tibetan title
+  document.title = plainNotes(meta.title).trim() || bareTitle(meta.title_bo) || "Pecha";
+  const now = sessionStorage.getItem("pecha-now");          // tests fix the clock
+  window.__creditsLang = creditsLanguage(meta, opts.lang);
+  $("credits-html").innerHTML = creditsHtml(meta, window.__creditsLang.credits_lang, now || localStamp(), !!opts.ai, opts.version);   // the skill passes the local time
+  // the notes go with the translation: without the translation layer they are left out, numbers and all (author's
+  // request, 16/10/2026: a note on its own, under a Tibetan-only text, makes no sense)
+  const notes = opts.notes === "end" && L.trans ? (meta.notes || []) : [];
+  $("notes-html").innerHTML = notesHtml(notes, window.__creditsLang.credits_lang);
+  // the introduction goes with the translation too, and only when asked for (author's choice, 19/10/2026)
+  const intro = opts.intro === "start" && L.trans ? (meta.intro || []) : [];
+  $("intro-html").innerHTML = introHtml(intro, window.__creditsLang.credits_lang);
+  // two blocks: the whole text in Tibetan first, then, from a new side, with no heading, the transliteration and
+  // translation; one cover, one numbering, the credits at the end. The Tibetan keeps the size of a Tibetan-only text
+  // and the Latin layers keep theirs, so nothing is set down to fit a long paragraph
+  const split = opts.blocks === "split" && L.bo && (L.phon || L.trans);
+  const latin = {bo: false, phon: L.phon, trans: L.trans};
+  $("source").innerHTML = noteMarks(refusal ? "" : split
+    ? buildUnits(blocks, {bo: true, phon: false, trans: false}).join("") +
+      `<div class="block-break"></div>` + buildUnits(blocks, latin).join("")
+    : buildUnits(blocks, L).join(""));
+  // numbers printed in the cover and the text: only in the Latin layers, so none without the translation
+  const marks = $("cover-html").content.querySelectorAll("sup.nr").length + $("source").querySelectorAll("sup.nr").length;
+  const boOnly = L.bo && !L.phon && !L.trans;
+  const boFlow = boOnly || split;                   // the Tibetan runs as one flow, at the Tibetan-only size
+  window.__set = {refused: !!refusal, doubleSided: opts.mode === "double", pairsPerSide: boOnly ? 0 : 4,
+                  autoSize: !boFlow, sectionBreak: !boOnly,
+                  boSize: boFlow ? 21.0 : 19.0,    // Tibetan only (or in its own block) at 21 pt; with other layers, 19 pt
+                  abbrev: (opts.abbrev || "").trim() ? atSyllable(opts.abbrev.trim(), ABBREV_MAX) : titleAbbrev(meta.title_bo)};
+  D.documentElement.style.setProperty("--lh-bo", boFlow ? "1.85" : "1.6");
+  D.documentElement.style.setProperty("--out", opts.lines === "thick-out" ? "2px" : "1px");
+  D.documentElement.style.setProperty("--in", opts.lines === "thick-in" ? "2px" : "1px");
+  window.__spike = {blocks: blocks.length, layers: L};
+  window.__title_bo = meta.title_bo || "";
+  // abbrev_from, title_chars and inserts_found let the skill pecha ask what the page leaves open
+  window.__run = {opts: Object.assign({}, opts, {abbrev: window.__set.abbrev}), input: pageHtml ? "page" : "text",
+                  abbrev_from: (opts.abbrev || "").trim() ? "option" : "title", title_chars: bareTitle(meta.title_bo).length,
+                  title_bo: bareTitle(meta.title_bo),     // the skill reads it to choose the name in the margin
+                  abbrev_cut: !(opts.abbrev || "").trim() && bareTitle(meta.title_bo).length > ABBREV_MAX - 1,   // the margin cut the title
+                  title: document.title,                  // the title in the PDF's tab; the skill names the text by it
+                  cover_title: meta.title ? {text: plainNotes(meta.title), from: meta.title_from || null,
+                                             shown: !!(L.trans && coverTitleShown(meta))} : {text: "", from: null, shown: false},
+                  inserts_found: blocks.filter(b => b.type === "insert").length,
+                  inserts_names: blocks.filter(b => b.type === "insert").slice(0, 5).map(b => b.text).map(plainNotes),   // the first headings, for the list of choices
+                  // the translator's notes: found on the page, printed before the credits, numbers printed in the text
+                  notes: {requested: opts.notes, found: (meta.notes || []).length, shown: notes.length, marks,
+                          left_out: opts.notes === "end" && !L.trans && (meta.notes || []).length ? "no_translation" : null,
+                          marks_shown: !!(L.trans && marks > 0)},
+                  // the translator's introduction: paragraphs found on the page, and printed after the cover
+                  intro: {requested: opts.intro, found: (meta.intro || []).length, shown: intro.length,
+                          left_out: opts.intro === "start" && !L.trans && (meta.intro || []).length ? "no_translation" : null},
+                  date: now || new Date().toISOString(),
+                  browser: (navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent])[0],
+                  userAgent: navigator.userAgent};
+}
+fill();
+</script>
+
+<script>
+const CFG = {"doubleSided": false, "flip": "long", "abbrev": "", "yig": "༄༅།། ", "pairsPerSide": 4, "boSize": 19.0, "phonSize": 11.0, "autoSize": true, "sectionBreak": true, "images": {}, "panelWidth": 55};
+const DIGITS = "\u0F20\u0F21\u0F22\u0F23\u0F24\u0F25\u0F26\u0F27\u0F28\u0F29";
+const tibetanDigits = n => String(n).replace(/\d/g, d => DIGITS[+d]);
+
+function panelHtml(img, side, edge){ return img ? `<div class="panel ${side}${edge ? ' edge' : ''}"><img src="${img.src}" alt=""></div>` : ''; }
+function makeSide(number, cover, panels){
+  // panels: {left, right} image entries for this side; on the cover the panels replace the narrow margin boxes
+  const d = document.createElement('div'); d.className = 'side'; d.dataset.number = number;
+  const unnumbered = (number === 1 || cover);
+  const num = unnumbered ? '' : tibetanDigits(number);
+  // the left margin carries only the short title (typed by the person or taken from the page); the number stays on the
+  // right
+  const abbrev = unnumbered ? '' : escapeText(CFG.abbrev);
+  const P = panels || {}; const w = Math.round(CFG.panelWidth / 25.4 * 96) + 'px';  // whole pixels keep the double lines even
+  let cols, body;
+  if(unnumbered && (P.left || P.right)){
+    cols = `${P.left ? w + ' ' : ''}1fr${P.right ? ' ' + w : ''}`;
+    body = `${panelHtml(P.left, 'left', true)}<div class="text cover"></div>${panelHtml(P.right, 'right', true)}`;
+  } else {
+    cols = `34px ${P.left ? w + ' ' : ''}1fr${P.right ? ' ' + w : ''} 34px`;
+    body = `<div class="margin-box"><span>${abbrev}</span></div>${panelHtml(P.left, 'left')}<div class="text${unnumbered ? ' cover' : ''}"></div>${panelHtml(P.right, 'right')}<div class="margin-box right"><span>${num}</span></div>`;
+  }
+  d.innerHTML = `<div class="frame"><div class="inner" style="grid-template-columns:${cols}">${body}</div></div>`;
+  if(P.left || P.right) d.dataset.panels = '1';
+  document.getElementById('stage').appendChild(d);
+  return d;
+}
+function sidePanels(number){ const I = CFG.images || {}; return {left: I['side-' + number + '-left'], right: I['side-' + number + '-right']}; }
+function plateHtml(img){ return `<img class="plate" src="${img.src}" alt="">`; }  // no caption: a name under the image clashes with the page
+// A side fits when every unit ends above the bottom limit the packer uses and nothing is wider than the text
+// box. Children's margins do not count: they are space, not ink. The printed page is measured by the tests too.
+const CREDITS_MIN_PT = 6;
+function fitsSide(text){
+  const limit = bottomLimit(text), right = text.getBoundingClientRect().right + 0.5;
+  return [...text.children].every(c => { const r = c.getBoundingClientRect(); return r.bottom <= limit && r.right <= right; })
+      && text.scrollWidth <= text.clientWidth + 1;
+}
+// [height the content occupies, height available] in CSS px, from the top of the content box to the packer's limit
+function filled(text){
+  const top = text.getBoundingClientRect().top + parseFloat(getComputedStyle(text).paddingTop);
+  const area = bottomLimit(text) - 0.5 - top;
+  const bottom = Math.max(top, ...[...text.children].map(c => c.getBoundingClientRect().bottom));
+  return [bottom - top, area];
+}
+// lines of a Tibetan-only flow on a side (0 when the side holds no flow): distinct tops of its cells' line boxes
+function flowLines(text){ return new Set([...text.querySelectorAll(':scope > .flow .cell')].flatMap(c => [...c.getClientRects()].map(r => Math.round(r.top)))).size; }
+function bottomLimit(text){ return text.getBoundingClientRect().bottom - parseFloat(getComputedStyle(text).paddingBottom) + 0.5; }
+function addYig(unit){
+  const bo = unit.querySelector('.bo'); if(!bo) return;
+  if(bo.textContent.trim().startsWith('\u0F04')) return;
+  const s = document.createElement('span'); s.className = 'yig'; s.textContent = CFG.yig; bo.prepend(s);
+}
+function removeYig(unit){ unit.querySelectorAll('.yig').forEach(s => s.remove()); }
+function backToSyllables(data, cut, min){
+  // moves a cut point back to a syllable boundary so that the tail keeps at least `min` syllables; 0 means "do not cut"
+  const tail = data.slice(cut);
+  // syllables are runs of letters between tsheg, shad, terma or spaces; a tsheg before a terma does not add one
+  const count = t => t.split(/[\u0F0B\u0F0D\u0F0E\u0F14\s\u00a0]+/).filter(x => /[\u0F40-\u0F6C]/.test(x)).length;
+  if(count(tail) >= min) return cut;
+  for(let i = cut - 1; i > 0; i--){ if(data[i - 1] === '\u0F0B' && count(data.slice(i)) >= min) return i; }
+  return 0;
+}
+function cutParagraph(p, limit){
+  // splits a paragraph at the last line that fits; returns the element holding the remainder, or null. A paragraph
+  // holds one piece of text, or, with note numbers, several between them: the cut goes into the piece the limit falls in
+  const pieces = [...p.childNodes].filter(n => n.nodeType === 3 && n.data.trim()); if(!pieces.length) return null;
+  let tn = pieces[0];
+  if(p.querySelector(':scope > sup.nr')){
+    const q = document.createRange();
+    tn = pieces.find(n => { q.selectNodeContents(n); return q.getBoundingClientRect().bottom > limit; }) || pieces[pieces.length - 1];
+  }
+  const r = document.createRange(); let lo = 0, hi = tn.data.length;
+  // the paragraph's box ends below the ink of its last line (half the leading, its padding): that room counts too,
+  // or the cut paragraph can end a pixel past the frame
+  r.selectNodeContents(p); const slack = Math.max(0, p.getBoundingClientRect().bottom - r.getBoundingClientRect().bottom);
+  while(lo < hi){ const m = (lo + hi + 1) >> 1; r.setStart(tn, 0); r.setEnd(tn, m); if(r.getBoundingClientRect().bottom + slack <= limit) lo = m; else hi = m - 1; }
+  if(lo <= 0 || lo >= tn.data.length) return null;
+  if(!p.classList.contains('bo')){
+    // Latin text: no orphan lines, at least two lines on each side of the cut
+    const lh = parseFloat(getComputedStyle(p).lineHeight);
+    // with note numbers, the lines are counted from the start of the paragraph and to its end
+    const multi = tn !== pieces[0] || pieces.length > 1;
+    r.setStart(multi ? p : tn, 0); r.setEnd(tn, lo); const head = Math.round(r.getBoundingClientRect().height / lh);
+    r.setStart(tn, lo); if(multi) r.setEnd(p, p.childNodes.length); else r.setEnd(tn, tn.data.length);
+    const tailLines = Math.round(r.getBoundingClientRect().height / lh);
+    if(head < 2 || tailLines < 2) return null;
+  }
+  if(p.classList.contains('bo')){
+    lo = backToSyllables(tn.data, lo, 3);   // the next side never opens with fewer than three syllables
+    if(lo <= 0) return null;
+  }
+  const tail = p.cloneNode(false); tail.textContent = tn.data.slice(lo); tn.data = tn.data.slice(0, lo);
+  // what follows the cut text node (the terma mark of a verse) closes the remainder, not the first piece
+  for(let n = tn.nextSibling; n; ){ const next = n.nextSibling; tail.appendChild(n); n = next; }
+  tail.dataset.cont = '1';                 // continuation of a cut paragraph (read by the tests)
+  return tail;
+}
+
+const MIN_FILL = 0.80;                    // a side closed while text continues is filled at least this much
+const FULL_SIDE = 0.90;                   // a side filled at least this much is centred in its height (90%: the side that opens with Latin text)
+const FULL_SIDE_BO = 0.93;                // ... or this much, when it opens with Tibetan: a fuller side keeps the text at the
+                                          // same height as its neighbours and leaves the rest below
+const PAD_LATIN = 3 / 25.4 * 96, PAD_BO = 6.5 / 25.4 * 96;   // top padding the pagination plans with (the printed one is 4.5 mm, or 6 mm on a short side)
+// share of the side's height the content above `u` fills
+function fillBefore(text, u){
+  const [, area] = filled(text), top = text.getBoundingClientRect().top + parseFloat(getComputedStyle(text).paddingTop);
+  const prev = u.previousElementSibling;
+  return area > 0 ? ((prev ? prev.getBoundingClientRect().bottom : top) - top) / area : 1;
+}
+// true when the paragraph's first part (its Tibetan, or the translation in a Latin-only paragraph) fits whole on this
+// side, so only what follows it moves on. Cutting the Tibetan itself is left to a paragraph alone on its side: measured
+// on the collection, earlier cuts freeze sides that the second pass would otherwise fill better.
+function cuttable(u, limit){
+  return [...u.children].findIndex(p => p.getBoundingClientRect().bottom > limit) > 0;
+}
+let rebalanced = 0, paging = {}, flowTails = 0, flowSplits = 0;
+// the last two sides of a Tibetan-only flow share its lines when the single line of the last one cannot go back: the
+// side before keeps the first half (rounded up), cut on a syllable, and the next side never opens with the shad pair
+function splitTail(pt, nt){
+  const pf = pt.querySelector(':scope > .flow'), nf = nt.querySelector(':scope > .flow');
+  const yig = [...nf.querySelectorAll('.yig')].map(y => [y, y.parentNode]); yig.forEach(([y]) => y.remove());
+  const back = [...nf.children]; back.forEach(c => pf.appendChild(c));
+  const undo = () => { [...pf.children].slice(pf.children.length - back.length).forEach(c => nf.appendChild(c)); yig.forEach(([y, parent]) => parent.prepend(y)); return false; };
+  const tops = [...new Set([...pf.querySelectorAll('.cell')].flatMap(c => [...c.getClientRects()].map(r => Math.round(r.top))))].sort((a, b) => a - b);
+  if(tops.length < 3) return undo();
+  const cutTop = tops[Math.ceil(tops.length / 2)] - 1;
+  const cells = [...pf.children];
+  let k = cells.findIndex(c => [...c.getClientRects()].some(r => r.top >= cutTop));
+  if(k < 0) return undo();
+  const c = cells[k];
+  let whole = c.getClientRects()[0].top >= cutTop;
+  if(!whole){
+    // the line break falls inside this verse: cut it there, keeping at least three syllables for the next side
+    const tn = [...c.childNodes].find(n => n.nodeType === 3 && n.data.trim());
+    if(!tn) return undo();
+    const r = document.createRange(); let lo = 0, hi = tn.data.length;
+    while(lo < hi){ const m = (lo + hi + 1) >> 1; r.setStart(tn, 0); r.setEnd(tn, m); const rs = r.getClientRects();
+      if(rs.length && rs[rs.length - 1].top < cutTop) lo = m; else hi = m - 1; }
+    lo = backToSyllables(tn.data, lo, 3);
+    if(lo >= tn.data.length) return undo();
+    if(lo === 0) whole = true;                     // the break falls right after the pair that opens this verse
+    else {
+      const c2 = document.createElement('span'); c2.className = c.className; c2.dataset.cont = '1'; c2.textContent = tn.data.slice(lo);
+      tn.data = tn.data.slice(0, lo); for(let n = tn.nextSibling; n; ){ const nx = n.nextSibling; c2.appendChild(n); n = nx; }
+      c.style.marginRight = '0'; c.after(c2); cells.splice(k + 1, 0, c2); k++;
+    }
+  }
+  if(whole && k > 0 && c.firstChild && c.firstChild.classList && c.firstChild.classList.contains('lead')){
+    // the verse goes whole and would open the side with the pair: the last syllables of the verse before go with it
+    const p = cells[k - 1];
+    const tp = [...p.childNodes].filter(n => n.nodeType === 3 && /[\u0F40-\u0F6C]/.test(n.data)).pop();
+    const at = tp ? backToSyllables(tp.data, tp.data.length, TAIL_SYL) : 0;
+    if(at > 0){
+      const c2 = document.createElement('span'); c2.className = p.className; c2.dataset.cont = '1';
+      c2.textContent = tp.data.slice(at); tp.data = tp.data.slice(0, at);
+      for(let n = tp.nextSibling; n; ){ const nx = n.nextSibling; c2.appendChild(n); n = nx; }
+      p.style.marginRight = '0'; p.after(c2); cells.splice(k, 0, c2);
+    }
+  }
+  if(k === 0) return undo();                    // the whole flow would move: nothing to share
+  cells.slice(k).forEach(x => nf.appendChild(x));
+  if(yig.length) nf.firstElementChild.prepend(yig[0][0]);
+  pt.dataset.split = '1'; nt.dataset.split = '1'; flowSplits++;
+  return true;
+}
+// Second pass: the greedy pass closes each side at the first unit that does not fit, which
+// leaves sides of verse rows two thirds full. Runs of consecutive sides between section breaks are redistributed by
+// dynamic programming over the measured unit heights: the same number of sides, the smallest squared shortfall below
+// MIN_FILL, then the smallest squared emptiness; the emptiest side never gets emptier. Sides holding a cut paragraph or a Tibetan-only flow stay as they are. If a rebuilt
+// side does not fit, the run goes back to the greedy arrangement. Returns the number of sides that changed.
+function rebalance(textSides){
+  const frozen = sd => !!sd.querySelector('.text [data-cont], .text .flow') || !!sd.dataset.panels;
+  const runs = []; let run = [];
+  const close = () => { if(run.length > 1) runs.push(run); run = []; };
+  textSides.forEach((sd, k) => {
+    const next = textSides[k + 1];
+    // a side whose cut paragraph continues on the next side freezes both
+    const cutHead = next && next.querySelector('.text [data-cont]');
+    if(frozen(sd) || cutHead){ close(); return; }
+    run.push(sd);
+    if(sd.dataset.ended === 'section' || sd.dataset.ended === 'end') close();
+  });
+  close();
+  let changed = 0; const removed = [];
+  for(const r of runs){
+    const fewer = (r[r.length - 1].dataset.ended === 'end' || !CFG.doubleSided) && !Object.keys(CFG.images || {}).length;
+    const res = rebalanceRun(r, fewer); changed += res.changed;
+    for(let q = 0; q < res.removed; q++) removed.push(r[r.length - 1 - q]);
+  }
+  return {changed, removed};
+}
+function opensBo(u){ const f = u.querySelector('.bo, .phon, .trans, p'); return !!(f && f.classList.contains('bo')); }
+const SCALE_MIN = 0.92;                   // a side may set its type down to this share of the text's size
+// the type of one side, scaled by k: Tibetan, transliteration and translation together; spacing stays as it is
+function scaleSide(text, k){
+  const root = getComputedStyle(document.documentElement);
+  ['--bo', '--phon', '--bo-small', '--latin'].forEach(v => {
+    if(k >= 1) text.style.removeProperty(v);
+    else text.style.setProperty(v, (parseFloat(root.getPropertyValue(v)) * k).toFixed(2) + 'pt');
+  });
+  if(k >= 1) delete text.dataset.scale; else text.dataset.scale = k.toFixed(3);
+}
+// the space between units (--breath, 5 mm) may close up on one side, down to BREATH_MIN, so that one more unit fits
+// there instead of leaving the side a third empty; the type keeps its size
+const BREATH = 5, BREATH_MIN = 3, BMIN_R = BREATH_MIN / BREATH;
+// a side that closes its breath or sets its type down fills at most FILL_MAX of its height, as the sides set down
+// before did: fuller, the vowel signs of a centred side come too close to the frame
+const FILL_MAX = 0.975;
+function tight(text){ const [used, area] = filled(text); return area > 0 && used / area > FILL_MAX; }
+function breathSide(text, mm){
+  if(mm >= BREATH - 1e-6){ text.style.removeProperty('--breath'); delete text.dataset.breath; }
+  else { text.style.setProperty('--breath', mm.toFixed(2) + 'mm'); text.dataset.breath = mm.toFixed(2); }
+}
+function rebalanceRun(run, allowFewer){
+  const texts = run.map(sd => sd.querySelector('.text'));
+  const original = texts.map(t => [...t.children]);
+  const b0 = texts.map(t => (t.dataset.breath ? +t.dataset.breath : BREATH) / BREATH);
+  // the yig mgo that opens a side sits on its first unit that is not a heading (as the greedy pass puts it)
+  const firstText = list => list.find(u => !u.classList.contains('section'));
+  const hadYig = original.map(list => !!(firstText(list) && firstText(list).querySelector('.yig')));
+  const units = original.flat();
+  // a heading never closes a side; one that opens a new side (sectionBreak) may stand only at the start of the run,
+  // while a soft one (a heading inside a text read by its markup) travels with the unit that follows it
+  const heading = units.map(u => u.classList.contains('section'));
+  const hard = units.map(u => u.classList.contains('section') && !u.classList.contains('soft'));
+  // a translation-only rubric right after a verse belongs to that verse ("In the English language: …" closing the
+  // incipit, "3 times"): it never opens a side on its own
+  const glued = units.map((u, i) => i > 0 && u.matches('p.trans.rubric') && !heading[i - 1]);
+  if(hard.some((h, i) => h && i > 0 && !hard.slice(0, i).every(Boolean))) return {changed: 0, removed: 0};
+  // own height of each unit, and the gap that follows it when another unit comes after it on the same side; a unit
+  // that closes a side shows no gap, so it takes the gap measured after units of the same kind (or the median)
+  const own = units.map(u => u.getBoundingClientRect().height);
+  const gapAfter = units.map(() => null), byKind = {};
+  texts.forEach((t, k) => original[k].forEach((u, q) => { const nx = original[k][q + 1]; if(!nx) return;
+    const g = nx.getBoundingClientRect().top - u.getBoundingClientRect().bottom; gapAfter[units.indexOf(u)] = g;
+    (byKind[u.className] = byKind[u.className] || []).push(g); }));
+  const all = gapAfter.filter(g => g !== null).sort((x, y) => x - y), median = all.length ? all[all.length >> 1] : 0;
+  units.forEach((u, i) => { if(gapAfter[i] === null){ const g = byKind[u.className]; gapAfter[i] = g ? g[0] : median; } });
+  // area of a side that opens with Latin text; a side opening with Tibetan has a deeper top padding
+  const t0 = texts[0], pad = parseFloat(getComputedStyle(t0).paddingTop);
+  const base = bottomLimit(t0) - 0.5 - (t0.getBoundingClientRect().top + pad) + (t0.classList.contains('opens-bo') ? pad - PAD_LATIN : 0);
+  const extra = PAD_BO - PAD_LATIN, cap = CFG.pairsPerSide || Infinity, m = run.length, n = units.length;
+  const lastExempt = ['end', 'section'].includes(run[m - 1].dataset.ended);
+  // best[j][s] = [short, sq, from, scale]: units 0..j-1 on s sides; a side's units scale by k >= SCALE_MIN.
+  // A side whose units, once laid out, did not fit even at SCALE_MIN is forbidden in the next plan ("i-j": units i..j-1
+  // on one side): the estimate assumes the type shrinks the height in proportion, and a long Tibetan paragraph that
+  // keeps its line breaks does not.
+  const forbidden = new Set();
+  const plan = () => {
+    const best = Array.from({length: n + 1}, () => Array(m + 1).fill(null)); best[0][0] = [0, 0, -1, 1, 1];
+    for(let j = 1; j <= n; j++) for(let s = 1; s <= m; s++){
+      let body = 0, gaps = 0, rows = 0;
+      for(let i = j - 1; i >= 0; i--){
+        body += own[i]; if(i < j - 1) gaps += gapAfter[i]; if(units[i].classList.contains('row')) rows++;
+        const area = base - (opensBo(units[i]) ? extra : 0);
+        if(body * SCALE_MIN + gaps * BMIN_R > area + 0.5 || rows > cap) break;
+        const prev = best[i][s - 1]; if(!prev) continue;
+        if(heading[j - 1] && j < n) continue;                         // a heading never closes a side
+        if(s > 1 && hard[i]) continue;                               // a hard one opens only the first side
+        if(forbidden.has(i + '-' + j)) continue;                     // laid out before and did not fit
+        if(glued[i]) continue;                                       // a rubric stays with the verse before it
+        let b = 1, k = 1;
+        if(body + gaps > area){ const most = area * FILL_MAX;
+          b = gaps > 0 ? Math.max(BMIN_R, (most - body) / gaps) : 1;
+          if(body + gaps * b > most){ b = BMIN_R; k = Math.min(1, (most - gaps * b) / body); } }
+        const fill = Math.min((body * k + gaps * b) / area, 1);
+        const last = (j === n && s === m) || (allowFewer && j === n), free = last && lastExempt;
+        const short = prev[0] + (free ? 0 : Math.max(0, MIN_FILL - fill) ** 2);   // shortfall below MIN_FILL, squared
+        const sq = prev[1] + (free ? 0 : (1 - fill) ** 2) + (1 - k) * 0.01 + (1 - b) * 0.002;   // a scaled side costs a little, a closer one less
+        const cur = best[j][s];
+        if(!cur || short < cur[0] - 1e-12 || (Math.abs(short - cur[0]) <= 1e-12 && sq < cur[1] - 1e-12)) best[j][s] = [short, sq, i, k, b];
+      }
+    }
+    // with allowFewer (the run that ends the text) the plan may use fewer sides: fewest shortfall, then fewest sides
+    let sides = m;
+    if(allowFewer) for(let s = m - 1; s >= 1; s--){ const p = best[n][s], q = best[n][sides];
+      if(p && (!q || p[0] <= q[0] + 1e-12)) sides = s; }               // the smallest shortfall; on a tie, fewer sides
+    if(!best[n][sides]) return null;
+    const cuts = [], scales = [], breaths = [];
+    for(let j = n, s = sides; s > 0; s--){ const st = best[j][s]; cuts.unshift(st[2]); scales.unshift(st[3]); breaths.unshift(st[4]); j = st[2]; }
+    return {short: best[n][sides][0], sides, cuts, scales, breaths};
+  };
+  paging.runs = (paging.runs || 0) + 1;
+  const fills = texts.map((t, k) => (k === m - 1 && lastExempt) ? 1 : Math.min(filled(t)[0] / filled(t)[1], 1));
+  const before = fills.reduce((a, f) => a + Math.max(0, MIN_FILL - f) ** 2, 0);
+  // the yig mgo after a hard heading stays with its unit; the one that opens a side follows the side's new first unit
+  // that is not a heading
+  const apply = (lists, ks, bs) => { units.forEach((u, i) => { if(!(i > 0 && hard[i - 1])) removeYig(u); });
+    texts.forEach((t, k) => { t.innerHTML = ''; lists[k].forEach(u => t.appendChild(u)); scaleSide(t, ks[k]); breathSide(t, BREATH * bs[k]);
+      t.classList.toggle('opens-bo', !!(lists[k][0] && opensBo(lists[k][0])));
+      if(hadYig[k] && firstText(lists[k])) addYig(firstText(lists[k])); }); };
+  const restore = () => apply(original, texts.map(() => 1), b0);
+  let p = null, sides = m, layout = null;
+  for(let attempt = 0; attempt < 6; attempt++){
+    p = plan();
+    if(!p){ restore(); paging.no_plan = (paging.no_plan || 0) + 1; return {changed: 0, removed: 0}; }
+    sides = p.sides;
+    if(p.short >= before - 1e-9 && sides === m){ restore(); paging.no_gain = (paging.no_gain || 0) + 1; return {changed: 0, removed: 0}; }
+    layout = texts.map((_, k) => k < sides ? units.slice(p.cuts[k], k + 1 < sides ? p.cuts[k + 1] : n) : []);
+    const ks = texts.map((_, k) => k < sides ? Math.max(SCALE_MIN, Math.floor(p.scales[k] * 1000) / 1000) : 1);
+    const bs = texts.map((_, k) => k < sides ? Math.max(BMIN_R, p.breaths[k]) : 1);
+    apply(layout, ks, bs);
+    // the estimate ignores what does not scale exactly (line boxes, the yig mgo, gaps that are not breath): close the
+    // breath first, then step the type down, until the side fits
+    const helped = k => bs[k] < 1 - 1e-6 || ks[k] < 1;
+    for(let k = 0; k < sides; k++) while((!fitsSide(texts[k]) || (helped(k) && tight(texts[k]))) && (bs[k] > BMIN_R + 1e-6 || ks[k] > SCALE_MIN)){
+      if(bs[k] > BMIN_R + 1e-6){ bs[k] = Math.max(BMIN_R, bs[k] - 0.05); breathSide(texts[k], BREATH * bs[k]); }
+      else { ks[k] = Math.max(SCALE_MIN, +(ks[k] - 0.005).toFixed(3)); scaleSide(texts[k], ks[k]); } }
+    const failed = texts.slice(0, sides).map((t, k) => k).filter(k => !fitsSide(texts[k]) || (helped(k) && tight(texts[k])));
+    if(!failed.length) break;
+    failed.forEach(k => forbidden.add(p.cuts[k] + '-' + (k + 1 < sides ? p.cuts[k + 1] : n)));   // plan again without it
+    paging.replanned = (paging.replanned || 0) + 1;
+    if(attempt === 5){ restore(); paging.not_fit = (paging.not_fit || 0) + 1; return {changed: 0, removed: 0}; }
+  }
+  const after = texts.slice(0, sides).map((t, k) => (k === sides - 1 && lastExempt) ? 1 : Math.min(filled(t)[0] / filled(t)[1], 1));
+  if(Math.min(...after) < Math.min(...fills) - 1e-6){ paging.emptier = (paging.emptier || 0) + 1; restore(); return {changed: 0, removed: 0}; }
+  paging.applied = (paging.applied || 0) + 1;
+  run.forEach((sd, k) => { if(k < sides - 1) sd.dataset.ended = 'full'; });
+  if(sides < m) run[sides - 1].dataset.ended = run[m - 1].dataset.ended;
+  const changed = layout.reduce((a, list, k) => a + (list.length !== original[k].length || list[0] !== original[k][0] ? 1 : 0), 0);
+  return {changed, removed: m - sides};
+}
+let splitPairs = 0, splitParas = 0, shadMoves = new Set();   // the sides opened by a moved cut
+const LEAD_BACK = true;
+
+// the last line of a Tibetan verse or paragraph holds at least TAIL_SYL syllables: they are kept together
+// (white-space: nowrap), so a line that would end with one or two syllables alone gives them company
+const TAIL_SYL = 3;
+function keepTail(bo){
+  const tn = [...bo.childNodes].filter(n => n.nodeType === 3 && /[\u0F40-\u0F6C]/.test(n.data)).pop(); if(!tn) return;
+  const at = backToSyllables(tn.data, tn.data.length, TAIL_SYL); if(at <= 0) return;
+  const k = document.createElement('span'); k.className = 'keep'; k.textContent = tn.data.slice(at); tn.data = tn.data.slice(0, at);
+  for(let n = tn.nextSibling; n; ){ const next = n.nextSibling; k.appendChild(n); n = next; }
+  bo.appendChild(k);
+}
+function paginate(){
+  document.querySelectorAll('#source p.bo').forEach(keepTail);
+  const units = [...document.getElementById('source').children];
+  const sides = [];
+  const I = CFG.images || {};
+  const cover = makeSide(1, false, {left: I['cover-left'], right: I['cover-right']}); sides.push(cover);
+  cover.querySelector('.text').innerHTML = document.getElementById('cover-html').innerHTML;
+  const titleBo = cover.querySelector('.cover-block .bo');
+  if(titleBo){ // the Tibetan title starts at 28 pt and shrinks only if it needs more than two lines
+    const rr = document.createRange(); let ts = 28;
+    const lines = () => { rr.selectNodeContents(titleBo); return rr.getClientRects().length; };
+    while(lines() > 2 && ts > 22){ ts -= 0.5; titleBo.style.fontSize = ts + 'pt'; }
+    // a line with no allowed break may still be wider than the cover: shrink until every line fits the width
+    const avail = titleBo.getBoundingClientRect().width * 0.97;     // room for Tibetan ink beyond the line box
+    const widest = () => { rr.selectNodeContents(titleBo); return Math.max(...[...rr.getClientRects()].map(r => r.width)); };
+    while(widest() > avail && ts > 14){ ts -= 0.5; titleBo.style.fontSize = ts + 'pt'; }
+  }
+  let number = 1;
+  if(I['after-cover']){ number++; const plate = makeSide(number, true); sides.push(plate); const t = plate.querySelector('.text'); t.classList.add('plate-page'); t.innerHTML = plateHtml(I['after-cover']); }
+  // the translator's introduction, when asked for: right after the cover, before the text, on pechas of its own, one
+  // paragraph after another, never cut between two pechas (author's choice, 19/10/2026)
+  const introH = document.getElementById('intro-html').innerHTML;
+  if(introH){
+    const tmp = document.createElement('div'); tmp.innerHTML = introH;
+    const head = tmp.querySelector('.intro-title'), paras = [...tmp.querySelectorAll('.intro-p')];
+    let first = true, box = null, sd = null;
+    const open = () => { number++; sd = makeSide(number, true); sides.push(sd);
+      sd.querySelector('.text').innerHTML = `<div class="intro">${first && head ? head.outerHTML : ''}</div>`;
+      first = false; box = sd.querySelector('.intro'); };
+    open();
+    for(const p of paras){
+      box.appendChild(p);
+      if(!fitsSide(sd.querySelector('.text')) && box.querySelectorAll('.intro-p').length > 1){ p.remove(); open(); box.appendChild(p); }
+    }
+  }
+  number++; let current = makeSide(number, false, sidePanels(number)); sides.push(current);
+  let text = current.querySelector('.text'), rows = 0, needYig = true;  // the text always opens with a yig mgo
+  const cap = CFG.pairsPerSide;
+  // why each text side closed: 'full' (the next unit did not fit), 'cap' (row limit), 'section' (a section opens a new side)
+  const newSide = reason => { current.dataset.ended = reason; number++; current = makeSide(number, false, sidePanels(number)); sides.push(current); text = current.querySelector('.text'); rows = 0; needYig = (CFG.doubleSided && number % 2 === 1); };
+  let i = 0;
+  while(i < units.length){
+    const u = units[i];
+    // the second of two blocks opens a new side, with no heading: the change of script shows where it begins
+    if(u.classList.contains('block-break')){ if(text.children.length) newSide('section'); i++; continue; }
+    if(u.classList.contains('section') && !u.classList.contains('soft') && CFG.sectionBreak){
+      // a section opens a new side, unless the current side only holds headings
+      if([...text.children].some(c => !c.classList.contains('section'))) newSide('section');
+      needYig = true;  // the yig mgo follows the start of the section
+    }
+    if(needYig && !u.classList.contains('section')){ const f1 = u.querySelector('.bo, .phon, .trans, p'); if(f1 && f1.classList.contains('bo')) addYig(u); needYig = false; }
+    if(text.children.length === 0){ const first = u.querySelector('.bo, .phon, .trans, p'); if(first && first.classList.contains('bo')) text.classList.add('opens-bo'); }
+    text.appendChild(u);
+    const limit = bottomLimit(text);
+    if(u.classList.contains('flow')){
+      const cells = [...u.children];
+      let k = cells.findIndex(c => c.getBoundingClientRect().bottom > limit);
+      if(k >= 0){
+        // cell k crosses the bottom: cut at the exact line break so the thread continues on the next side
+        const c = cells[k]; const rects = c.getClientRects();
+        if(rects.length > 1 && rects[0].bottom <= limit){
+          const tn = [...c.childNodes].find(n => n.nodeType === 3 && n.data.trim());
+          if(tn){
+            const r = document.createRange(); let lo = 0, hi = tn.data.length;
+            while(lo < hi){ const m = (lo + hi + 1) >> 1; r.setStart(tn, 0); r.setEnd(tn, m); if(r.getBoundingClientRect().bottom <= limit) lo = m; else hi = m - 1; }
+            lo = backToSyllables(tn.data, lo, 3);  // no orphan: the next side opens with at least three syllables
+            if(lo > 0 && lo < tn.data.length){
+              const c2 = document.createElement('span'); c2.className = c.className; c2.textContent = tn.data.slice(lo); c2.dataset.cont = '1';
+              tn.data = tn.data.slice(0, lo); c.style.marginRight = '0';  // the cut half is not a verse end
+              c.after(c2); cells.splice(k + 1, 0, c2); k = k + 1;
+            }
+          }
+        }
+      }
+      // a side never opens with the pair that closes the verse before it: the cut moves back into that verse, so
+      // its last syllables (at least TAIL_SYL) open the next side with the pair; a shorter verse goes whole
+      const opensLead = c => !c.dataset.cont && c.firstChild && c.firstChild.classList && c.firstChild.classList.contains('lead');
+      while(LEAD_BACK && k > 0 && opensLead(cells[k])){
+        const p = cells[k - 1];
+        const tp = [...p.childNodes].filter(n => n.nodeType === 3 && /[\u0F40-\u0F6C]/.test(n.data)).pop();
+        const at = tp ? backToSyllables(tp.data, tp.data.length, TAIL_SYL) : 0;
+        if(at > 0){
+          const c2 = document.createElement('span'); c2.className = p.className; c2.dataset.cont = '1';
+          c2.textContent = tp.data.slice(at); tp.data = tp.data.slice(0, at);
+          for(let n = tp.nextSibling; n; ){ const next = n.nextSibling; c2.appendChild(n); n = next; }
+          p.style.marginRight = '0'; p.after(c2); cells.splice(k, 0, c2); shadMoves.add(number + 1);
+        } else if(k > 1){ k--; shadMoves.add(number + 1); }   // a verse shorter than TAIL_SYL goes whole, and is checked again
+        else break;                                            // the first verse of the side stays
+      }
+      if(k > 0){
+        const rest = u.cloneNode(false); cells.slice(k).forEach(c => rest.appendChild(c));
+        units.splice(i + 1, 0, rest); i++; newSide('full'); continue;
+      }
+      if(k === 0 && text.children.length > 1){ text.removeChild(u); removeYig(u); newSide('full'); continue; }
+      i++; continue;
+    }
+    // a paragraph that does not fit is cut at a line break when it is alone on the side, or when moving it whole would
+    // leave this side filled below MIN_FILL; otherwise it moves whole to the next side. A paragraph with
+    // Tibetan and another layer is cut only when it is alone on the side: a cut to fill a side would part the Tibetan
+    // from its transliteration and translation
+    // (also a transliteration and its translation without the Tibetan, as in the second of two blocks or in the
+    // transliteration and translation alone: the reading and its meaning stay on one side)
+    const layered = ['.bo', '.phon', '.trans'].filter(sel => u.querySelector(sel)).length > 1;
+    // ... except inside its last layer: the Tibetan and the start of its translation stay together, with at least two
+    // Latin lines on each side of the cut (an almost empty side before it)
+    if(layered && u.classList.contains('para') && text.children.length > 1 && u.getBoundingClientRect().bottom > limit
+       && fillBefore(text, u) < MIN_FILL){
+      const parts = [...u.children]; const k = parts.findIndex(p => p.getBoundingClientRect().bottom > limit);
+      const last = parts[parts.length - 1];
+      const tail = (k === parts.length - 1 && k > 0 && !last.classList.contains('bo')) ? cutParagraph(last, limit) : null;
+      if(tail){
+        const rest = u.cloneNode(false); rest.appendChild(tail);
+        splitParas++; units.splice(i + 1, 0, rest); i++; newSide('full'); continue;
+      }
+    }
+    if(u.classList.contains('para') && u.getBoundingClientRect().bottom > limit
+       && (text.children.length === 1 || (!layered && fillBefore(text, u) < MIN_FILL && cuttable(u, limit)))){
+      const parts = [...u.children]; const k = parts.findIndex(p => p.getBoundingClientRect().bottom > limit);
+      const rest = u.cloneNode(false);
+      if(k >= 0){
+        const p = parts[k]; const tail = cutParagraph(p, limit);
+        if(tail) rest.appendChild(tail); else if(k > 0) rest.appendChild(p);
+        parts.slice(k + 1).forEach(x => rest.appendChild(x));
+      }
+      splitParas++;
+      if(rest.children.length) units.splice(i + 1, 0, rest); i++; newSide('full'); continue;
+    }
+    if(u.classList.contains('row')){
+      const pair = u.querySelector('.pair');
+      const right = text.getBoundingClientRect().right - parseFloat(getComputedStyle(text).paddingRight) + 0.5;
+      if(pair && pair.children.length > 1 && pair.lastElementChild.getBoundingClientRect().right > right){
+        // a pair that does not fit side by side becomes two rows, one verse each, and is reprocessed
+        splitPairs++;
+        const newRows = [...pair.children].map(c => { const row = document.createElement('div'); row.className = 'row'; const p = document.createElement('div'); p.className = 'pair'; p.appendChild(c); row.appendChild(p);
+          if(c.dataset.trans !== undefined){ const t = document.createElement('p'); t.className = 'trans'; t.innerHTML = c.dataset.trans; row.appendChild(t); } return row; });
+        text.removeChild(u); units.splice(i, 1, ...newRows); continue;
+      }
+      rows++;
+    }
+    const tooTall = u.getBoundingClientRect().bottom > limit, overflows = tooTall || (cap && rows > cap);
+    if(overflows && text.children.length > 1){
+      // one more unit may fit with the breath closed up; the next side would otherwise open with a third left blank
+      if(tooTall && !(cap && rows > cap) && !text.dataset.breath && !u.classList.contains('section')){
+        breathSide(text, BREATH_MIN);
+        if(fitsSide(text) && !tight(text)){ i++; continue; }
+        breathSide(text, BREATH);
+      }
+      const prev = u.previousElementSibling; text.removeChild(u); removeYig(u);
+      const dragged = []; let p = prev;
+      while(p && p.classList.contains('section') && text.children.length > 1){ const before = p.previousElementSibling; text.removeChild(p); dragged.unshift(p); p = before; }
+      newSide(tooTall ? 'full' : 'cap');
+      if(dragged.length) units.splice(i, 0, ...dragged);
+      continue;
+    }
+    i++;
+  }
+  // a Tibetan-only flow that ends with a single line on its own side: the line goes back to the side before, which may
+  // set its type down to SCALE_MIN; that side is dropped and the following ones move up. Not with images, and in
+  // double-sided printing only at the end of the text, where no later side changes parity.
+  for(let k = 1; k < sides.length; k++){
+    const N = sides[k], P = sides[k - 1];
+    const nt = N.querySelector('.text'), pt = P.querySelector('.text');
+    if(nt.classList.contains('cover') || pt.classList.contains('cover') || N.dataset.panels || P.dataset.panels) continue;
+    if(nt.children.length !== 1 || pt.children.length !== 1 || P.dataset.ended !== 'full' || N.dataset.ended === 'full') continue;
+    const nf = nt.querySelector(':scope > .flow'), pf = pt.querySelector(':scope > .flow');
+    if(!nf || !pf || flowLines(nt) !== 1) continue;
+    if(Object.keys(CFG.images || {}).length) continue;
+    if(CFG.doubleSided && N !== current){ splitTail(pt, nt); continue; }   // the line cannot go back here: the two sides share the lines
+    const yig = [...nf.querySelectorAll('.yig')].map(y => [y, y.parentNode]);   // the opening sign of an odd side does not travel into the middle of a line
+    yig.forEach(([y]) => y.remove());
+    const moved = [...nf.children]; moved.forEach(c => pf.appendChild(c));
+    let ok = false;
+    for(let q = 1; q >= SCALE_MIN - 1e-9; q -= 0.005){ scaleSide(pt, q); if(fitsSide(pt) && !tight(pt)){ ok = true; break; } }
+    if(!ok){ scaleSide(pt, 1); moved.forEach(c => nf.appendChild(c)); yig.forEach(([y, parent]) => parent.prepend(y)); splitTail(pt, nt); continue; }
+    if(N.dataset.ended) P.dataset.ended = N.dataset.ended; else delete P.dataset.ended;
+    sides.splice(k, 1); N.remove(); number--; flowTails++;
+    if(current === N){ current = P; text = pt; }
+    sides.forEach((sd, j) => { if(+sd.dataset.number === j + 1) return; sd.dataset.number = j + 1;
+      const m = sd.querySelector('.margin-box.right span'); if(m && m.textContent) m.textContent = tibetanDigits(j + 1); });
+    k--;
+  }
+  current.dataset.ended = 'end';                       // the last side of the text
+  const firstText = sides.findIndex(x => !x.querySelector('.text.cover'));
+  if(firstText >= 0){
+    const res = rebalance(sides.slice(firstText)); rebalanced = res.changed;
+    // sides left empty at the end of the text are dropped; nothing follows them yet but the plates and credits
+    res.removed.forEach(sd => { sides.splice(sides.indexOf(sd), 1); sd.remove(); number--; });
+    // a side dropped inside the text moves the following ones up: their number and margin follow
+    if(res.removed.length) sides.forEach((sd, k) => { if(+sd.dataset.number === k + 1) return; sd.dataset.number = k + 1;
+      paging.renumbered = (paging.renumbered || 0) + 1;
+      const m = sd.querySelector('.margin-box.right span'); if(m && m.textContent) m.textContent = tibetanDigits(k + 1); });
+  }
+  if(I['penultimate']){ number++; const plate = makeSide(number, true); sides.push(plate); const t = plate.querySelector('.text'); t.classList.add('plate-page'); t.innerHTML = plateHtml(I['penultimate']); }
+  // credits page: source, the date with the dedication, and the notice, always on its own side. The translator's
+  // notes, when asked for, go above the credits; when they do not fit there, they open their own sides before the
+  // credits, note by note, and a note is never cut between two sides
+  const notesH = document.getElementById('notes-html').innerHTML, creditsH = document.getElementById('credits-html').innerHTML;
+  let credits = makeSide(number + 1, true);
+  credits.querySelector('.text').innerHTML = notesH + creditsH;
+  if(notesH && !fitsSide(credits.querySelector('.text'))){
+    credits.remove();
+    const tmp = document.createElement('div'); tmp.innerHTML = notesH;
+    const head = tmp.querySelector('.notes-title'), items = [...tmp.querySelectorAll('.note-item')];
+    let list = null, first = true;
+    const open = () => { number++; const sd = makeSide(number, true); sides.push(sd);
+      sd.querySelector('.text').innerHTML = `<div class="notes">${first && head ? head.outerHTML : ''}<div class="note-list"></div></div>`;
+      first = false; list = sd.querySelector('.note-list'); return sd; };
+    let sd = open();
+    for(const it of items){
+      list.appendChild(it);
+      if(!fitsSide(sd.querySelector('.text')) && list.children.length > 1){ it.remove(); sd = open(); list.appendChild(it); }
+    }
+    // the last notes side, after the first: when its notes fit in the left column, they stay there, starting at the
+    // height of the first note of the side before, as if the title were still above them (author's choice, 16/10/2026)
+    if(head && sides.filter(x => x.querySelector('.text > .notes')).length > 1){
+      const t = sd.querySelector('.text'), prev = sides[sides.length - 2].querySelector('.text');
+      const prevItem = prev.querySelector('.note-item'), pad = parseFloat(getComputedStyle(t).paddingTop) || 0;
+      const top = prevItem ? prevItem.getBoundingClientRect().top - prev.getBoundingClientRect().top - pad : 0;
+      list.classList.add('one-column'); t.classList.add('notes-top'); list.style.marginTop = Math.max(0, top) + 'px';
+      if(!fitsSide(t)){ list.classList.remove('one-column'); t.classList.remove('notes-top'); list.style.marginTop = ''; }
+    }
+    credits = makeSide(number + 1, true);
+    credits.querySelector('.text').innerHTML = creditsH;
+  }
+  sides.push(credits);
+  // a long bibliography must not be cut off: the credits widen, then shrink in steps down to a legible floor
+  const ct = credits.querySelector('.text'), box = ct.querySelector('.credits');
+  if(box && !fitsSide(ct)) box.style.maxWidth = 'none';      // first the full width of the side, then smaller type
+  for(let pt = 8; box && !fitsSide(ct) && pt > CREDITS_MIN_PT; ){ pt -= 0.25; box.style.fontSize = pt + 'pt'; }
+  return sides;
+}
+
+function newSheet(face){ const s = document.createElement('div'); s.className = 'sheet ' + face; s.innerHTML = '<div class="slot top"></div><div class="cut-line"></div><div class="slot bottom"></div>'; document.getElementById('output').appendChild(s); return s; }
+function place(sheet, slot, side){ if(!side) return; sheet.querySelector('.slot.' + slot).appendChild(side); side.style.position = 'absolute'; side.style.top = 0; side.style.left = 0; }
+function impose(sides){
+  const S = n => sides[n - 1]; const n = sides.length;
+  if(CFG.doubleSided){
+    for(let k = 0; 4 * k < n; k++){
+      const front = newSheet('front'); place(front, 'top', S(4*k+1)); place(front, 'bottom', S(4*k+3));
+      const back = newSheet('back' + (CFG.flip === 'short' ? ' rotated' : '')); place(back, 'top', S(4*k+4)); place(back, 'bottom', S(4*k+2));
+    }
+  } else {
+    for(let k = 0; 2 * k < n; k++){ const front = newSheet('front'); place(front, 'top', S(2*k+1)); place(front, 'bottom', S(2*k+2)); }
+  }
+}
+const AUX = 0.85;                        // auxiliary text: share of the recited body
+// the translation's size, from the stylesheet (the auto-fit never changes it)
+function latinPt(){ return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--latin')); }
+// the transliteration follows the Tibetan when the whole text is set down, but never below the translation: it is the
+// line that is recited aloud, and at 6.9 pt (Confession of Downfalls) it was hard to read
+function phonPt(f){ return Math.max(CFG.phonSize * f, Math.min(CFG.phonSize, latinPt())); }
+function applyFactor(f){
+  const r = document.documentElement.style;
+  r.setProperty('--bo', (CFG.boSize * f).toFixed(1) + 'pt'); r.setProperty('--phon', phonPt(f).toFixed(1) + 'pt'); r.setProperty('--bo-small', (CFG.boSize * f * AUX).toFixed(2) + 'pt');
+}
+const MIN_BO_PT = 12;     // smallest Tibetan size the auto-fit may choose; below it text is cut, not shrunk
+function proseFactor(f){
+  // reduce the Tibetan size until the tallest paragraph, with its translation, fits on one side
+  const source = document.getElementById('source'); const paras = [...source.querySelectorAll('.para:not(.aux)')].filter(p => p.querySelector('.bo')); if(!paras.length) return f;  // Latin-only blocks never shrink the Tibetan, nor does auxiliary prose (it is cut across sides instead)
+  for(let it = 0; it < 8; it++){
+    applyFactor(f);
+    const probe = makeSide(99); const t = probe.querySelector('.text'); t.classList.add('opens-bo');
+    const cs = getComputedStyle(t); const avail = t.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 0.5;
+    let worst = null, worstH = 0;
+    for(const p of paras){ const c = p.cloneNode(true); t.appendChild(c); const h = c.getBoundingClientRect().height; if(h > worstH){ worstH = h; worst = c; } }
+    let boH = 0; if(worst){ worst.querySelectorAll('.bo').forEach(b => boH += b.getBoundingClientRect().height); }
+    probe.remove();
+    if(worstH <= avail || CFG.boSize * f <= MIN_BO_PT) break;
+    const needed = avail - (worstH - boH);          // height left for the Tibetan block
+    // never below the recitation floor: a paragraph still too tall is cut across sides instead
+    f = Math.max(MIN_BO_PT / CFG.boSize, f * Math.max(0.6, Math.min(0.97, needed / boH)) * 0.99);
+  }
+  return f;
+}
+// every font face is loaded before the layout: a Tibetan-only body never asks for the Latin ones, and the notes and
+// the credits, measured with a fallback face, would not fit once printed with their own
+const FONTS_FIRST = ['12px "Noto Serif Tibetan"', '12px "Noto Serif"', 'italic 12px "Noto Serif"'];
+Promise.all(FONTS_FIRST.map(f => document.fonts.load(f))).then(() => document.fonts.ready).then(() => {
+  const sourceEl = document.getElementById('source'); const html0 = sourceEl.innerHTML; const stage = document.getElementById('stage');
+  if (CFG.refused){                       // the reader refused the input: lay nothing out, report why
+    stage.remove(); sourceEl.remove();
+    window.__report = {refusal: window.__refusal, run: window.__run || null, sides: []};
+    document.body.dataset.ready = '1';
+    return;
+  }
+  // pairs never shrink the text: one wider than the side is split into two rows during pagination
+  let f = 1, sides = null, attempts = 0;
+  if(CFG.autoSize) f = proseFactor(f);
+  while(!sides){
+    attempts++; applyFactor(f); sourceEl.innerHTML = html0; stage.innerHTML = '';
+    splitPairs = 0; splitParas = 0; shadMoves = new Set(); rebalanced = 0; paging = {}; flowTails = 0; flowSplits = 0;
+    sides = paginate();
+  }
+  const mm = v => +(v / 96 * 25.4).toFixed(1);
+  const report = sides.map(s => { const t = s.querySelector('.text'), [used, area] = filled(t);
+    const kind = t.classList.contains('plate-page') ? 'plate' : t.querySelector(':scope > .credits') ? 'credits'
+               : t.querySelector(':scope > .notes') ? 'notes' : t.querySelector(':scope > .intro') ? 'intro' : t.classList.contains('cover') ? 'cover' : 'text';
+    return {number: +s.dataset.number, kind, ended: s.dataset.ended || null, top_mm: mm(parseFloat(getComputedStyle(t).paddingTop)),
+            scale: t.dataset.scale ? +t.dataset.scale : 1, content_mm: mm(used), area_mm: mm(area),
+            fill: area > 0 ? +(used / area).toFixed(3) : 0, fits: fitsSide(t), breath_mm: t.dataset.breath ? +t.dataset.breath : 5, margin: (s.querySelector('.margin-box.right span') || {}).textContent || '', units: t.children.length, cells: t.querySelectorAll('.cell').length, bo_lines: flowLines(t), bo_chars: [...t.querySelectorAll(':scope > .flow')].reduce((n, f) => n + f.textContent.length, 0),
+            opening_mm: (o => o && o.nextElementSibling ? mm(o.nextElementSibling.getBoundingClientRect().top - o.getBoundingClientRect().bottom) : null)(t.querySelector(':scope > .opening')),
+            opening_text: (o => o ? o.textContent.trim().slice(0, 40) : null)(t.querySelector(':scope > .opening'))}; });
+  // a nearly full side is centred in its height; a side the text leaves short keeps the text at the top.
+  // Decided after the report above, so `fill` stays measured with the text at the top; `top_mm` and `align` are
+  // then read again from the side as printed.
+  sides.forEach((s, k) => { const t = s.querySelector('.text'), r = report[k];
+    if(r.kind !== 'text') return;
+    // a Tibetan-only flow side closed because the next line did not fit is full, whatever its fill
+    const full = r.fill >= (t.classList.contains('opens-bo') ? FULL_SIDE_BO : FULL_SIDE) || (r.ended === 'full' && !!t.querySelector(':scope > .flow'));
+    const centred = full && !t.dataset.split;          // the two sides that share the last lines of a flow keep the text at the top
+    t.classList.add(centred ? 'centered' : 'loose');
+    r.align = centred ? 'centered' : 'top';
+    r.opens_bo = t.classList.contains('opens-bo');
+    r.opens_title = !!t.querySelector(':scope > .insert:first-child, :scope > .section-head:not(.has-bo):first-child');   // a translator's heading opens the side
+    r.top_mm = mm(parseFloat(getComputedStyle(t).paddingTop)); });
+  impose(sides);
+  stage.remove(); sourceEl.remove();
+  window.__report = {size: {bo: +(CFG.boSize * f).toFixed(1), phon: +phonPt(f).toFixed(1), factor: +f.toFixed(3), attempts, split_pairs: splitPairs, split_paras: splitParas, rebalanced_sides: rebalanced, rebalance: paging, flow_tails: flowTails, flow_splits: flowSplits, shad_moves: shadMoves.size, shad_spaces: shadSpaces, openings: sides.reduce((n, sd) => n + sd.querySelectorAll('.text > .opening').length, 0)},
+    ...(window.__creditsLang || {}), run: window.__run || null, pairing: (typeof pairing === 'undefined') ? null : pairing, terma: (typeof terma === 'undefined') ? null : terma, sides: report, fonts: [...new Set([...document.fonts].filter(x => x.status === 'loaded').map(x => x.family))], sheets: document.querySelectorAll('.sheet').length};
+  // wait for every image (panels and plates are inserted after the load event) and for every font face,
+  // including the Latin ones that a Tibetan-only body never requests before the credits page is inserted
+  const fontsNeeded = [document.fonts.load('12px "Noto Serif Tibetan"'), document.fonts.load('12px "Noto Serif"'), document.fonts.load('italic 12px "Noto Serif"')];
+  Promise.all([...fontsNeeded, ...[...document.images].map(i => i.complete ? Promise.resolve() : new Promise(r => { i.onload = r; i.onerror = r; }))])
+    .then(() => document.fonts.ready).then(() => {
+      window.__report.fonts = [...new Set([...document.fonts].filter(x => x.status === 'loaded').map(x => x.family))];
+      document.body.dataset.ready = '1';
+    });
+});
+</script>
+
+<script>Object.assign(CFG, window.__set);</script>
+</body></html>
